@@ -1,21 +1,21 @@
 # CSCE 435 Group project
 
-## 0. Group number: 
+## 0. Group number: 10
 
 ## 1. Group members:
-1. First
-2. Second
-3. Third
-4. Fourth
+1. Thomas Zheng
+2. Albert Yin
+3. Paul Bae
+4. Krish Chhabra
 
 ## 2. Project topic (e.g., parallel sorting algorithms)
 
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 
-- Bitonic Sort:
-- Sample Sort:
-- Merge Sort:
-- Radix Sort:
+- Bitonic Sort: 
+- Sample Sort: 
+- Merge Sort: 
+- Radix Sort: 
 
 ### 2b. Pseudocode for each parallel algorithm
 - For MPI programs, include MPI calls you will use to coordinate between processes
