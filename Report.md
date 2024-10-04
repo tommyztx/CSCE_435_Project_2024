@@ -37,6 +37,7 @@ TODO
 ```
 Choose Some Constant k to be the Oversampling Ratio (i.e. Number of Elements Sampled From Each Array Segment)
 
+
 Sample_Sort(arr, n, p, rank):
     Collect Personal Sample of k Elements as my_sample
 
@@ -58,7 +59,23 @@ Sample_Sort(arr, n, p, rank):
 
         Recieve pivots From Process 0 (MPI_Send)
     
+    Allocate Array of p Vectors, Each of Size n / p^2 as buckets (Each Row Represents a Bucket, and We Allocate Initial Memory Under the Assumption of Even Distribution)
+
+    for i from 0 to n / p - 1:
+        elem = arr[i]
+        found_bucket = false
+
+        for bucket from 0 to p - 2:
+            if elem < pivots[bucket]:
+                found_bucket = true
+                buckets[bucket].push_back(elem)
+                break
+        
+        if not found_bucket:
+            buckets[p - 1].push_back(elem)
     
+    
+
 
 Main:
     Initialize MPI Environment (MPI_Init)
