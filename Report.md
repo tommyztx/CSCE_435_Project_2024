@@ -17,7 +17,6 @@ For group communication, everyone in the group has exchanged phone numbers and i
 
 #### Bitonic Sort
 
-TODO
 Bitonic sort is a parallel sorting algorithm that works well on distributed systems that support parallel computation. It sorts a sequence of numbers using a series of compare-and-swap operations, following a divide-and-conquer approach. It works efficiently with bitonic sequences, which are sequences that first monotonically increase then monotonically decrease, also vice versa. The time complexity of Bitonic Sort is O(log^2 n) which is efficient for paralle computation compared to other algorithms like Bubble Sort O(n^2).
 
 #### Sample Sort
@@ -45,19 +44,22 @@ Radix sort is a non-comparative sorting algorithm that orders elements by proces
 5. After each process sorts its part, the results need to be gathered and redistrbuted across processes for the next sort
 6. Finalize MPI
 
-# Initialize MPI / rank / number of processes
-# totalSize is length of the vector
+```cpp
+// Initialize MPI / rank / number of processes
+// totalSize is length of the vector
 if (rank == 0) {
     arr.resize(totalSize);
     for (int i = 0; i < totalSize; i++>){
         arr[i] = rand() % 1000;
     }
 }
-# Split the array based on numprocesses
+
+// Split the array based on numprocesses
 int localSize = totalSize / numProcesses;
 vector<int> localArr(localSize);
-# Use MPI Scatter to distribute the array across processes
-# Bitonic Sort and merge between processes
+
+// Use MPI Scatter to distribute the array across processes
+// Bitonic Sort and merge between processes
 for (int k = 2; k <= numProcesses; k\*=2){
     for (int j = k/2; j > 0; j/=2) {
         partner = rank ^ j
@@ -69,8 +71,9 @@ for (int k = 2; k <= numProcesses; k\*=2){
         }
     }
 }
-# MPI Gather sorted arrays on the root processses
-# Output the sorted array
+
+// MPI Gather sorted arrays on the root processses
+// Output the sorted array
 if (rank == 0) {
     cout << "Sorted array";
     for (int i = 0; i < totalSize; i++) {
@@ -78,7 +81,9 @@ if (rank == 0) {
     }
     cout << endl;
 }
-# Finalize MPI
+
+// Finalize MPI
+```
 
 #### Sample Sort
 
