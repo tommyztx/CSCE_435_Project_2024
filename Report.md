@@ -33,7 +33,58 @@ Radix sort is a non-comparative sorting algorithm that orders elements by proces
 TODO
 
 #### Sample Sort
-TODO
+
+```
+Choose Some Constant k to be the Oversampling Ratio (i.e. Number of Elements Sampled From Each Array Segment)
+
+Sample_Sort(arr, n, p, rank):
+    Collect Personal Sample of k Elements as my_sample
+
+    Allocate Array of Size p - 1 as pivots
+
+    if rank == 0:
+        Allocate Array of Size k * p as sample
+
+        Gather Samples From All Processes into sample (MPI_Gather)
+
+        Sort sample Using Some Comparison-Based Sort
+
+        Set pivots to Contain [sample[k], sample[2k], ..., sample[(p - 1) * k]]
+
+        Send pivots to Other Processes (MPI_Send)
+
+    else:
+        Send my_sample to Process 0 (MPI_Gather)
+
+        Recieve pivots From Process 0 (MPI_Send)
+    
+    
+
+Main:
+    Initialize MPI Environment (MPI_Init)
+
+    Retrieve Number of Processes as p (MPI_Comm_Size)
+
+    Retrieve Process Rank as rank (MPI_Comm_Rank)
+
+    if rank == 0:
+        Generate Array of Size n as arr
+
+        for i from 0 to p-1:
+            Send arr[i * p] Through arr[(i + 1) * p - 1] to Process i (MPI_Send)
+
+        Sample_Sort(arr, n, p, rank, k)
+
+        Verify arr is Properly Sorted
+    
+    else:
+        Retrieve My Portion of Array from Process 0 into arr (MPI_Recv)
+
+        Sample_Sort(arr, n, p, rank, k)
+
+    Finalize MPI (MPI_Finalize)
+
+```
 
 #### Merge Sort
 TODO
