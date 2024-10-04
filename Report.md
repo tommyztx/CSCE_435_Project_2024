@@ -25,7 +25,7 @@ Sample sort is a divide-and-conquer sorting algorithm that provides a more stati
 
 #### Merge Sort
 
-TODO
+Merge sort is a classical divide-and-conquer sorting algorithm that splits an input array into smaller subarrays, recursively sorts those subarrays, and then merges them back together to form a sorted array. The process begins by dividing the array into two halves repeatedly until each subarray contains only a single element. Once the array is split into minimal subarrays, the merge phase starts. During the merge phase, adjacent subarrays are combined in sorted order by comparing the smallest elements of each subarray and appending them into a new array in sequence. This merging process continues until the entire array is reassembled in sorted order. Merge sort operates with a consistent time complexity of O(n log n) and is highly efficient for large datasets, as it guarantees stable sorting. Its particularly advantageous when working with data that doesn't fit into memory all at once, as it can handle external sorting scenarios effectively. Unlike algorithms that rely on element comparisons for placement, merge sort inherently ensures ordered results by merging sorted partitions, making it a robust and dependable sorting strategy for distributed processing.
 
 #### Radix Sort
 
@@ -40,7 +40,7 @@ Radix sort is a non-comparative sorting algorithm that orders elements by proces
 1. Initialize MPI environemnt
 2. Distribute the input array into available processes
 3. Local sort using a sequential version of Bitonic Sort
-4. Bitonmic merge between processes
+4. Bitonic merge between processes
 5. After each process sorts its part, the results need to be gathered and redistrbuted across processes for the next sort
 6. Finalize MPI
 
@@ -91,7 +91,67 @@ TODO
 
 #### Merge Sort
 
-TODO
+1. Initialize MPI environment.
+2. Divide the array of numbers among available processes.
+3. Local Sorting using a sequential Merge Sort
+4. Exchange and merge sorted arrays between processes.
+5. Gather the sorted subarrays at the root process.
+6. Output the sorted array at the root process.
+7. Finalize MPI
+
+```cpp
+// Initialize MPI / rank / number of processes
+// totalSize is length of the vector
+if (rank == 0) {
+    arr.resize(totalSize);
+    for (int i = 0; i < totalSize; i++>){
+        arr[i] = rand() % 1000;
+    }
+}
+
+// Split the array based on numprocesses
+int localSize = totalSize / numProcesses;
+vector<int> localArr(localSize);
+
+// Use MPI Scatter to distribute the array across processes
+
+// Merge Sort / Merge with other processes block
+for (int step = 1; step < numProcesses; step *= 2) {
+        if (rank % (2 * step) == 0) {
+            if (rank + step < numProcesses) {
+
+                vector<int> recvArr(localSize);
+                // Use MPI Recv to get other array from partner process store in recvArr
+
+                // Merge the received array with the local array
+                vector<int> mergedArr(localArr.size() + recvArr.size());
+                merge(localArr, recvArr, mergedArr);
+                localArr = mergedArr;
+            }
+        } 
+        else {
+            // Send local array to the partner process and exit the loop
+            int partner = rank - step;
+            // Use MPI send to send the sorted array to its partner process
+            break;
+        }
+        // Double the size of the local size after merging
+        localSize *= 2; 
+    }
+
+// MPI Gather sorted arrays on the root processses
+
+if (rank == 0) {
+    // Output the sorted array (on root process)
+    cout << "Sorted array: ";
+    for (int i = 0; i < totalSize; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+}
+
+// Finalize MPI
+```
 
 #### Radix Sort
 
