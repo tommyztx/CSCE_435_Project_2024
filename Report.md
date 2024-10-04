@@ -8,6 +8,8 @@
 3. Paul Bae
 4. Krish Chhabra
 
+For group communication, everyone in the group has exchanged phone numbers and is part of an iMessage group chat. This is how we will be communicating throughout the project. If the need to have a meeting arises, we will arrange to meet in-person.
+
 ## 2. Project topic (e.g., parallel sorting algorithms)
 
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
