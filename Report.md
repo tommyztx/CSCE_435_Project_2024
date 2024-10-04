@@ -91,7 +91,7 @@ Repeat the local sort and gather steps for each digit, starting from the least s
 All evalution will be performed on TAMU's Grace. We will use Caliper for measuring execution time and Thicket for plotting and analysing measurements.
 
 #### Input sizes
-For testing, we will use input arrays of three different size: 128, 1024, and 8912 elements. This will allow us to evaluate our sorts using both strong and weak scaling as well as providing a good range of problem sizes.
+For testing, we will use input arrays of 7 different size: 2^16, 2^18, 2^20, 2^22, 2^24, 2^26, and 2^28 elements. This will allow us to evaluate our sorts using both strong and weak scaling as well as providing a good range of problem sizes.
 
 #### Input types
 In terms of ordering, our input arrays will be of 4 different types: random, sorted, reverse sorted, and sorted with 1% perturbed. This will allow us to observe the strengths and weaknesses of each sorting algorithm and reason about what form input array each is more tailored to solving.
@@ -107,7 +107,6 @@ Example:
 #### Scaling
 In our performance analysis, we will use both strong scaling (comparing performance on same problem size as the number of processors increases) and weak scaling (comparing performance as both problem size and number of processors increase).
 
-For each sort, we will collect data from the execution with 6 different numbers of processors: 2, 4, 8, 16, 32, and 64 processors.
-- Keeping the number of processors as powers of 2 greatly simplifies the implementation of our algorithms
-- It is crucial to evaluate with 64 processors as this is the smallest power of two that requires more than one node to run (can see effect of inter-node communication).
-- We will benchmark with only 1 processor to see sequential performance when appropriate, but this is not always relevant. For example, sample sort with 1 processor is simply the comparison-based sort used to sort each bucket and may not be incredibly helpful when analyzing parallelization. If we have time, we may implement fully sequential versions of our algorithms to better understand how the overhead of inter-process communication is affecting our performance.
+For each sort, we will collect data from the execution with 10 different numbers of processors: 2, 4, 8, 16, 32, 64, 128, 256, 512, and 1024 processors.
+- Keeping the number of processors as powers of 2 greatly simplifies the implementation of our algorithms.
+- It is crucial to evaluate with at least 64 processors as this is the smallest power of two that requires more than one node to run (can see effect of inter-node communication).
