@@ -18,7 +18,18 @@
 - Radix Sort: Radix sort is a non-comparative sorting algorithm that orders elements by processing them digit by digit. Radix sort operates by sorting numbers based on individual digits, starting from the least significant digit (LSD) and moving towards the most significant digit (MSD). It is a non comparative sorting algorithm that ends up being slower than comparison algorithmns in most situations.
 
 ### 2b. Pseudocode for each parallel algorithm
-- [DELETE BEFORE SUBMISSION] For MPI programs, include MPI calls you will use to coordinate between processes
+[DELETE BEFORE SUBMISSION] For MPI programs, include MPI calls you will use to coordinate between processes
+
+#### Bitonic Sort
+TODO
+
+#### Sample Sort
+TODO
+
+#### Merge Sort
+TODO
+
+#### Radix Sort
 1. Initialize MPI environment.
 2. Divide the array of numbers among available processes.
 3. Local Sorting (using Counting Sort by each process):
@@ -66,6 +77,7 @@ if (rank == 0) {
 ```
 
 Repeat the local sort and gather steps for each digit, starting from the least significant to the most significant digit.
+
 ### 2c. Evaluation plan - what and how will you measure and compare
 - Input sizes
   128, 1024, 8912
