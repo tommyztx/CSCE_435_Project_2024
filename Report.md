@@ -26,7 +26,7 @@
 5. After each process sorts its part, the results need to be gathered and redistributed across processes for the next digit sort.
 6. Repeat for Each Digit
 
-'''cpp
+```cpp
 //Initialize MPI
 //Initialize rank
 //Initialize numprocesses
@@ -63,7 +63,7 @@ if (rank == 0) {
     }
     cout << endl;
 }
-'''cpp
+```cpp
 
 Repeat the local sort and gather steps for each digit, starting from the least significant to the most significant digit.
 ### 2c. Evaluation plan - what and how will you measure and compare
