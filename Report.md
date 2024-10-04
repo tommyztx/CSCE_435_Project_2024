@@ -67,6 +67,7 @@ if (rank == 0) {
 
 Repeat the local sort and gather steps for each digit, starting from the least significant to the most significant digit.
 ### 2c. Evaluation plan - what and how will you measure and compare
-- Input sizes, Input types
-- Strong scaling (same problem size, increase number of processors/nodes)
-- Weak scaling (increase problem size, increase number of processors)
+- Input sizes
+  128, 1024, 8912
+- Input types
+  Random, Sorted, Reverse Sorted, Sorted with 1% 
