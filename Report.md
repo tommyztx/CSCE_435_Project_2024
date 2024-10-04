@@ -63,7 +63,7 @@ if (rank == 0) {
     }
     cout << endl;
 }
-```cpp
+```
 
 Repeat the local sort and gather steps for each digit, starting from the least significant to the most significant digit.
 ### 2c. Evaluation plan - what and how will you measure and compare
