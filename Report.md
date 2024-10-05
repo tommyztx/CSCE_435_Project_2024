@@ -33,8 +33,6 @@ Radix sort is a non-comparative sorting algorithm that orders elements by proces
 
 ### 2b. Pseudocode for each parallel algorithm
 
-[DELETE BEFORE SUBMISSION] For MPI programs, include MPI calls you will use to coordinate between processes
-
 #### Bitonic Sort
 
 1. Initialize MPI environemnt
