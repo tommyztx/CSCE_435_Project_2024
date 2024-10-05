@@ -77,14 +77,15 @@ Sample_Sort(arr, n, p, rank):
         my_bucket_size = buckets[0].size()
 
         for i from 1 to p - 1:
-            Receive Size of Next Send from Process j into curr_size
+            Receive Size of Next Send from Process j into curr_size (MPI_Recv)
             if curr_size > 0:
-                Receive curr_size Elements from Process j into arr + my_bucket_size
+                Receive curr_size Elements from Process j into arr + my_bucket_size (MPI_Recv)
                 my_bucket_size += curr_size
         
         for i from 1 to p - 1:
             Send Size of buckets[i] to Process i (MPI_Send)
-            Send Elements of buckets[i] to Process i (MPI_Send)
+            if buckets[i].size() > 0:
+                Send Elements of buckets[i] to Process i (MPI_Send)
     
     else:
         Send Size of buckets[0] to Process 0 (MPI_Send)
@@ -99,21 +100,35 @@ Sample_Sort(arr, n, p, rank):
                 my_bucket_size = buckets[i].size()
 
                 for j from 1 to p - 1:
-                    Receive Size of Next Send from Process j into curr_size
+                    Receive Size of Next Send from Process j into curr_size (MPI_Recv)
                     if curr_size > 0:
                         if my_bucket_size + curr_size > my_bucket_cap:
                             Resize arr to my_bucket_size + curr_size
                         
-                        Receive curr_size Elements from Process j into arr + my_bucket_size
+                        Receive curr_size Elements from Process j into arr + my_bucket_size (MPI_Recv)
                         my_bucket_size += curr_size
             
             else:
                 Send Size of buckets[i] to Process i (MPI_Send)
-                Send Elements of buckets[i] to Process i (MPI_Send)
+                if buckets[i].size() > 0:
+                    Send Elements of buckets[i] to Process i (MPI_Send)
     
     if my_bucket_size > 1:
         Sort [arr[0], arr[1], ..., arr[my_bucket_size - 1]] Using Some Comparison-Based Sort
 
+    if rank == 0:
+        arr[my_bucket_size++] = pivots[0]
+        for i from 1 to p - 1:
+            Receive Size of Next Send from Process i into curr_size (MPI_Recv)
+            if curr_size > 0:
+                Receive curr_size Elements from Process i into arr + my_bucket_size (MPI_Recv)
+                my_bucket_size += curr_size
+            arr[my_bucket_size++] = pivots[i]
+
+    else:
+        Send my_bucket_size to Process 0 (MPI_Send)
+        if my_bucket_size > 0:
+            Send [arr[0], arr[1], ..., arr[my_bucket_size - 1]] to Process 0 (MPI_Send)
 
 
 Main:
