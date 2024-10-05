@@ -45,19 +45,16 @@ Sample_Sort(arr, n, p, rank):
 
     if rank == 0:
         Allocate Array of Size k * p as sample
-
-        Gather Samples From All Processes into sample (MPI_Gather)
+        Gather Samples from All Processes into sample (MPI_Gather)
 
         Sort sample Using Some Comparison-Based Sort
 
         Set pivots to Contain [sample[k], sample[2k], ..., sample[(p - 1) * k]]
-
         Send pivots to Other Processes (MPI_Send)
 
     else:
         Send my_sample to Process 0 (MPI_Gather)
-
-        Recieve pivots From Process 0 (MPI_Send)
+        Recieve pivots from Process 0 (MPI_Send)
     
     Allocate Array of p Vectors, Each of Size n / p^2 as buckets (Each Row Represents a Bucket, and We Allocate Initial Memory Under the Assumption of Even Distribution)
 
@@ -74,14 +71,54 @@ Sample_Sort(arr, n, p, rank):
         if not found_bucket:
             buckets[p - 1].push_back(elem)
     
+    my_bucket_size = 0
+    if rank == 0:
+        Copy Elements of buckets[0] into arr
+        my_bucket_size = buckets[0].size()
+
+        for i from 1 to p - 1:
+            Receive Size of Next Send from Process j into curr_size
+            if curr_size > 0:
+                Receive curr_size Elements from Process j into arr + my_bucket_size
+                my_bucket_size += curr_size
+        
+        for i from 1 to p - 1:
+            Send Size of buckets[i] to Process i (MPI_Send)
+            Send Elements of buckets[i] to Process i (MPI_Send)
     
+    else:
+        Send Size of buckets[0] to Process 0 (MPI_Send)
+        Send Elements of buckets[0] to Process 0 (MPI_Send)
+
+        my_bucket_cap = n / p
+        for i from 1 to p - 1:
+            if i == rank:
+                if buckets[i].size() > my_bucket_cap:
+                    Resize arr to buckets[i].size()
+                Copy Elements of buckets[i] into arr
+                my_bucket_size = buckets[i].size()
+
+                for j from 1 to p - 1:
+                    Receive Size of Next Send from Process j into curr_size
+                    if curr_size > 0:
+                        if my_bucket_size + curr_size > my_bucket_cap:
+                            Resize arr to my_bucket_size + curr_size
+                        
+                        Receive curr_size Elements from Process j into arr + my_bucket_size
+                        my_bucket_size += curr_size
+            
+            else:
+                Send Size of buckets[i] to Process i (MPI_Send)
+                Send Elements of buckets[i] to Process i (MPI_Send)
+    
+    if my_bucket_size > 1:
+        Sort [arr[0], arr[1], ..., arr[my_bucket_size - 1]] Using Some Comparison-Based Sort
+
 
 
 Main:
     Initialize MPI Environment (MPI_Init)
-
     Retrieve Number of Processes as p (MPI_Comm_Size)
-
     Retrieve Process Rank as rank (MPI_Comm_Rank)
 
     if rank == 0:
@@ -95,7 +132,7 @@ Main:
         Verify arr is Properly Sorted
     
     else:
-        Retrieve My Portion of Array from Process 0 into arr (MPI_Recv)
+        Retrieve My Portion of Array (Size n / p) from Process 0 into arr (MPI_Recv)
 
         Sample_Sort(arr, n, p, rank, k)
 
