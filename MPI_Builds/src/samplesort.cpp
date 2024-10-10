@@ -206,8 +206,47 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
     CALI_MARK_END("comm_large");
     CALI_MARK_END("comm");
 
+    // Sort my bucket
+    CALI_MARK_BEGIN("comp");
+    CALI_MARK_BEGIN("comp_large");
 
-    printf("SAMPLE SORT\n");
+    if (my_bucket_size > 1) {
+        insertion_sort(arr, my_bucket_size);
+    }
+
+    CALI_MARK_END("comp_large");
+    CALI_MARK_END("comp");
+
+
+    // Consolidate buckets into original array
+    CALI_MARK_BEGIN("comm");
+    CALI_MARK_BEGIN("comm_large");
+    
+    if (rank == 0) {
+        arr[my_bucket_size++] = pivots[0];
+        for (unsigned int i = 1; i < p; ++i) {
+            unsigned int curr_size;
+            MPI_Recv(&curr_size, 1, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD, &status);
+
+            if (curr_size > 0) {
+                MPI_Recv(arr + my_bucket_size, curr_size, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD, &status);
+                my_bucket_size += curr_size;
+            }
+
+            arr[my_bucket_size++] = pivots[i];
+        }
+    }
+
+    else {
+        MPI_Send(&my_bucket_size, 1, MPI_UNSIGNED, 0, 0, MPI_COMM_WORLD);
+
+        if (my_bucket_size > 0) {
+            MPI_Send(arr, my_bucket_size, MPI_UNSIGNED, 0, 0, MPI_COMM_WORLD);
+        }
+    }
+
+    CALI_MARK_END("comm_large");
+    CALI_MARK_END("comm");
 
 
     // Deallocate any allocated memory
