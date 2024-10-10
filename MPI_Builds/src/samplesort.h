@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <time.h>
+#include <vector>
+#include <cstring>
 
 #include <caliper/cali.h>
 #include <caliper/cali-manager.h>
@@ -17,6 +19,8 @@ const unsigned int k = 4;
 void collect_sample(unsigned int* arr, unsigned int n, unsigned int* sample, unsigned int sample_size);
 
 void insertion_sort(unsigned int* arr, unsigned int n);
+
+unsigned int* grow_array(unsigned int* arr, unsigned int n, unsigned int* old_cap, unsigned int new_cap);
 
 void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, unsigned int p);
 

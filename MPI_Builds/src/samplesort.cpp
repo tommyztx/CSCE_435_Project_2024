@@ -25,6 +25,24 @@ void insertion_sort(unsigned int* arr, unsigned int n) {
 
 
 
+unsigned int* grow_array(unsigned int* arr, unsigned int n, unsigned int* old_cap, unsigned int new_cap) {
+    unsigned int resize = 2 * (*old_cap);
+    while (resize < new_cap) {
+        resize *= 2;
+    }
+    *old_cap = resize;
+
+    unsigned int* temp_arr = new unsigned int[resize];
+    for (unsigned int i = 0; i < n; ++i) {
+        temp_arr[i] = arr[i];
+    }
+
+    delete[] arr;
+    return temp_arr;
+}
+
+
+
 void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, unsigned int p) {
     // Collect Personal Sample
     CALI_MARK_BEGIN("comp");
@@ -78,7 +96,126 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
     CALI_MARK_END("comm_small");
     CALI_MARK_END("comm");
 
+
+    // Sort elements into local buckets
+    CALI_MARK_BEGIN("comp");
+    CALI_MARK_BEGIN("comp_large");
+
+    std::vector* buckets = new std::vector[p];
+    for (int i = 0; i < p; ++i) {
+        buckets[i] = std::move(std::vector());
+        buckets[i].reserve(n / (p * p));
+    }
+
+    for (unsigned int i = 0; i < n / p; ++i) {
+        unsigned int elem = arr[i];
+        bool found_bucket = false;
+
+        for (unsigned int bucket = 0; bucket < p - 1; ++bucket) {
+            if (elem < pivots[bucket]) {
+                found_bucket = true;
+                buckets[bucket].push_back(elem);
+                break;
+            }
+        }
+
+        if (!found_bucket) {
+            buckets[p - 1].push_back(elem);
+        }
+    }
+
+    CALI_MARK_END("comp_large");
+    CALI_MARK_END("comp");
+
+
+    // Distribute buckets to proper process
+    CALI_MARK_BEGIN("comm");
+    CALI_MARK_BEGIN("comm_large");
+
+    unsigned int my_bucket_size = 0;
+    MPI_Status status;
+    if (rank == 0) {
+        memcpy(arr, buckets[0].data(), buckets[0].size() * sizeof(unsigned int));
+        my_bucket_size += buckets[0].size();
+
+        for (unsigned int i = 1; i < p; ++i) {
+            unsigned int curr_size;
+            MPI_Recv(&curr_size, 1, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD, &status);
+
+            if (curr_size > 0) {
+                MPI_Recv(arr + my_bucket_size, curr_size, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD, &status);
+                my_bucket_size += curr_size;
+            }
+        }
+
+        for (unsigned int i = 1; i < p; ++i) {
+            MPI_Send(&(buckets[i].size()), 1, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
+
+            if (curr_size > 0) {
+                MPI_Send(buckets[i].data(), buckets[i].size(), MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
+            }
+        }
+    }
+
+    else {
+        MPI_Send(&(buckets[0].size()), 1, MPI_UNSIGNED, 0, 0, MPI_COMM_WORLD);
+
+        if (curr_size > 0) {
+            MPI_Send(buckets[0].data(), buckets[0].size(), MPI_UNSIGNED, 0, 0, MPI_COMM_WORLD);
+        }
+
+        unsigned int my_bucket_cap = n / p;
+        for (unsigned int i = 1; i < p; ++i) {
+            if (i == rank) {
+                if (buckets[i].size() > my_bucket_cap) {
+                    arr = grow_array(arr, 0, &my_bucket_cap, buckets[i].size());
+                }
+
+                memcpy(arr, buckets[i].data(), buckets[i].size() * sizeof(unsigned int));
+                my_bucket_size += buckets[i].size();
+                
+                for (unsigned int j = 0; j < p; ++j) {
+                    if (i == j) {
+                        continue;
+                    }
+
+                    unsigned int curr_size;
+                    MPI_Recv(&curr_size, 1, MPI_UNSIGNED, j, 0, MPI_COMM_WORLD, &status);
+
+                    if (curr_size > 0) {
+                        if (my_bucket_size + curr_size > my_bucket_cap) {
+                            arr = grow_array(arr, my_bucket_size, &my_bucket_cap, my_bucket_size + curr_size);
+                        }
+
+                        MPI_Recv(arr + my_bucket_size, curr_size, MPI_UNSIGNED, j, 0, MPI_COMM_WORLD, &status);
+                        my_bucket_size += curr_size;
+                    }
+                }
+            }
+
+            else {
+                MPI_Send(&(buckets[i].size()), 1, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
+
+                if (curr_size > 0) {
+                    MPI_Send(buckets[i].data(), buckets[i].size(), MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
+                }
+            }
+        }
+    }
+
+    CALI_MARK_END("comm_large");
+    CALI_MARK_END("comm");
+
+
     printf("SAMPLE SORT\n");
+
+
+    // Deallocate any allocated memory
+    delete[] pivots;
+    delete[] buckets;
+    if (rank == 0) {
+        delete[] sample;
+    }
 }
 
 
