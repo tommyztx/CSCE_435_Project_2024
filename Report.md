@@ -349,3 +349,45 @@ For each sort, we will collect data from the execution with 10 different numbers
 
 - Keeping the number of processors as powers of 2 greatly simplifies the implementation of our algorithms.
 - It is crucial to evaluate with at least 64 processors as this is the smallest power of two that requires more than one node to run (can see effect of inter-node communication).
+
+## 3. Project implementation
+
+### 3a. Caliper instrumentation
+
+This section contains calltrees for each algorithm generated using Caliper and Thicket.
+
+#### Bitonic Sort
+
+TODO: Add calltree
+
+#### Sample Sort
+
+TODO: Add calltree
+
+#### Merge Sort
+
+TODO: Add calltree
+
+#### Radix Sort
+
+TODO: Add calltree
+
+### 3c. Collect metadata
+
+This section contains metadata for each algorithm generated using Caliper and Thicket.
+
+#### Bitonic Sort
+
+TODO: Add metadata
+
+#### Sample Sort
+
+TODO: Add metadata
+
+#### Merge Sort
+
+TODO: Add metadata
+
+#### Radix Sort
+
+TODO: Add metadata
