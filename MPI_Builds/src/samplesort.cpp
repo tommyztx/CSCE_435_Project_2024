@@ -1,8 +1,8 @@
 #include "samplesort.h"
 
 void collect_sample(unsigned int* arr, unsigned int n, unsigned int* sample, unsigned int sample_size) {
-    for (unsigned int i = 0; i < k; ++i) {
-        unsigned int rand_ind = rand() % (n / k) + i * (n / k);
+    for (unsigned int i = 0; i < sample_size; ++i) {
+        unsigned int rand_ind = rand() % (n / sample_size) + i * (n / sample_size);
         sample[i] = arr[rand_ind];
     }
 }
@@ -10,11 +10,11 @@ void collect_sample(unsigned int* arr, unsigned int n, unsigned int* sample, uns
 
 
 void insertion_sort(unsigned int* arr, unsigned int n) {
-    for (int i = 1; i < n; ++i) {
+    for (unsigned int i = 1; i < n; ++i) {
         unsigned int temp = arr[i];
 
-        int hole = i;
-        while (hole > 0 && hole[i] < hole[i - 1]) {
+        unsigned int hole = i;
+        while (hole > 0 && temp < arr[hole - 1]) {
             arr[hole] = arr[hole - 1];
             --hole;
         }
@@ -64,7 +64,7 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
         sample = new unsigned int[p * k];
     }
 
-    MPI_Gather(my_sample, k, MPI_UNSIGNED, sample, p * k, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+    MPI_Gather(my_sample, k, MPI_UNSIGNED, sample, k, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
 
     CALI_MARK_END("comm_small");
     CALI_MARK_END("comm");
@@ -101,9 +101,8 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
     CALI_MARK_BEGIN("comp");
     CALI_MARK_BEGIN("comp_large");
 
-    std::vector* buckets = new std::vector[p];
+    std::vector<unsigned int>* buckets = new std::vector<unsigned int>[p]{};
     for (int i = 0; i < p; ++i) {
-        buckets[i] = std::move(std::vector());
         buckets[i].reserve(n / (p * p));
     }
 
@@ -115,6 +114,10 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
             if (elem < pivots[bucket]) {
                 found_bucket = true;
                 buckets[bucket].push_back(elem);
+                break;
+            }
+            else if (elem == pivots[bucket]) { // Assumes there are no duplicate elements
+                found_bucket = true;
                 break;
             }
         }
@@ -133,13 +136,13 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
     CALI_MARK_BEGIN("comm_large");
 
     unsigned int my_bucket_size = 0;
+    unsigned int curr_size = 0;
     MPI_Status status;
     if (rank == 0) {
         memcpy(arr, buckets[0].data(), buckets[0].size() * sizeof(unsigned int));
         my_bucket_size += buckets[0].size();
 
         for (unsigned int i = 1; i < p; ++i) {
-            unsigned int curr_size;
             MPI_Recv(&curr_size, 1, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD, &status);
 
             if (curr_size > 0) {
@@ -149,19 +152,21 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
         }
 
         for (unsigned int i = 1; i < p; ++i) {
-            MPI_Send(&(buckets[i].size()), 1, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
+            curr_size = buckets[i].size();
+            MPI_Send(&curr_size, 1, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
 
             if (curr_size > 0) {
-                MPI_Send(buckets[i].data(), buckets[i].size(), MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
+                MPI_Send(buckets[i].data(), curr_size, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
             }
         }
     }
 
     else {
-        MPI_Send(&(buckets[0].size()), 1, MPI_UNSIGNED, 0, 0, MPI_COMM_WORLD);
+        curr_size = buckets[0].size();
+        MPI_Send(&curr_size, 1, MPI_UNSIGNED, 0, 0, MPI_COMM_WORLD);
 
         if (curr_size > 0) {
-            MPI_Send(buckets[0].data(), buckets[0].size(), MPI_UNSIGNED, 0, 0, MPI_COMM_WORLD);
+            MPI_Send(buckets[0].data(), curr_size, MPI_UNSIGNED, 0, 0, MPI_COMM_WORLD);
         }
 
         unsigned int my_bucket_cap = n / p;
@@ -179,7 +184,6 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
                         continue;
                     }
 
-                    unsigned int curr_size;
                     MPI_Recv(&curr_size, 1, MPI_UNSIGNED, j, 0, MPI_COMM_WORLD, &status);
 
                     if (curr_size > 0) {
@@ -194,10 +198,11 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
             }
 
             else {
-                MPI_Send(&(buckets[i].size()), 1, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
+                curr_size = buckets[i].size();
+                MPI_Send(&curr_size, 1, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
 
                 if (curr_size > 0) {
-                    MPI_Send(buckets[i].data(), buckets[i].size(), MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
+                    MPI_Send(buckets[i].data(), curr_size, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD);
                 }
             }
         }
@@ -205,6 +210,7 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
 
     CALI_MARK_END("comm_large");
     CALI_MARK_END("comm");
+
 
     // Sort my bucket
     CALI_MARK_BEGIN("comp");
@@ -221,11 +227,10 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
     // Consolidate buckets into original array
     CALI_MARK_BEGIN("comm");
     CALI_MARK_BEGIN("comm_large");
-    
+
     if (rank == 0) {
-        arr[my_bucket_size++] = pivots[0];
+        arr[my_bucket_size++] = pivots[0]; // Remove is there are duplicate elements
         for (unsigned int i = 1; i < p; ++i) {
-            unsigned int curr_size;
             MPI_Recv(&curr_size, 1, MPI_UNSIGNED, i, 0, MPI_COMM_WORLD, &status);
 
             if (curr_size > 0) {
@@ -233,7 +238,9 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
                 my_bucket_size += curr_size;
             }
 
-            arr[my_bucket_size++] = pivots[i];
+            if (i < p - 1) {
+                arr[my_bucket_size++] = pivots[i]; // Remove is there are duplicate elements
+            }
         }
     }
 
@@ -255,6 +262,9 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
     if (rank == 0) {
         delete[] sample;
     }
+    else {
+        delete[] arr;
+    }
 }
 
 
@@ -269,7 +279,7 @@ void sample_sort(unsigned int* arr, unsigned int n, unsigned int rank, unsigned 
         arr = new unsigned int[elem_per_proc];
     }
     
-    MPI_Scatter(arr, elem_per_proc, MPI_UNSIGNED, arr, elem_per_proc, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+    MPI_Scatter(arr, elem_per_proc, MPI_UNSIGNED, (rank == 0) ? MPI_IN_PLACE : arr, elem_per_proc, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
 
     CALI_MARK_END("comm_large");
     CALI_MARK_END("comm");
@@ -279,8 +289,6 @@ void sample_sort(unsigned int* arr, unsigned int n, unsigned int rank, unsigned 
     sample_sort_helper(arr, n, rank, p);
 
 
-    // Deallocate array in helper processes
-    if (rank > 0) {
-        delete[] arr;
-    }
+    // Wait for all processes to finish sorting
+    MPI_Barrier(MPI_COMM_WORLD);
 }

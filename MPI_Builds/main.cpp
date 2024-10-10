@@ -18,7 +18,7 @@
 void perturb_array(unsigned int* arr, unsigned int n, float perturbed_ratio) {
     unsigned int num_swaps = (unsigned int) (n * perturbed_ratio);
     
-    for (int swap_no = 0; swap_no < num_swaps; ++swap_no) {
+    for (unsigned int swap_no = 0; swap_no < num_swaps; ++swap_no) {
         unsigned int first_ind = rand() % n;
         unsigned int second_ind = rand() % n;
 
@@ -139,11 +139,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    MPI_Barrier(MPI_COMM_WORLD);
-
     // Check for array correctness
     if (rank == 0) {
         CALI_MARK_BEGIN("correctness_check"); 
+        
         bool sorted = true;
         for (unsigned int i = 1; i < input_size; ++i) {
             if (input_array[i] < input_array[i - 1]) {

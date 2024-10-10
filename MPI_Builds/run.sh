@@ -35,6 +35,18 @@ for name in "${sort_names[@]}"; do
                     num_nodes=$(($num_nodes + 1));
                 fi
 
+                # Adjust number of nodes needed to be a power of 2
+                for i in {0..10}; do
+                    if (($num_nodes == 2 ** $i))
+                    then
+                        break
+                    elif (($num_nodes < 2 ** $i))
+                    then
+                        num_nodes=$((2 ** $i))
+                        break
+                    fi
+                done
+
                 # Determine tasks per node needed
                 num_tasks=$(($p / $num_nodes))
                 if (($p % $num_nodes > 0))
