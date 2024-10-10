@@ -1,0 +1,17 @@
+All of this should only be done in Grace.
+
+First, run ". build.sh" to set up the cmake build. This can take a while, but only needs to be run once.
+
+To run the execution script, use the command "bash run.sh". Output files and Caliper files will be stored in Output_Files/ and Cali_Files/, respectively.
+
+To edit the details of a run, you may need to edit run.sh and/or mpi.grace_job.
+
+Edit mpi.grace_job if you need to increase the time allotted to each task.
+    We can edit the execution script to scale the time if it becomes a frequent issue.
+
+Edit run.sh for all other configurations.
+    Lines 17-20 are the most important as they define the sorts, input types, array sizes, and number or processes that will be tested.
+    If we need more customization (e.g. different array sizes for different sorts), we can edit the execution script as necessary.
+    If you need more memory, you can edit how mem_needed is set on line 47.
+
+If you do edit any of the config files, please be careful about commiting changes to GitHub. Unless you are improving how the script functions, do not commit the changes to GitHub.

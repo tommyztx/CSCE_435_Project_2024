@@ -1,0 +1,6 @@
+# Ignore VS Code configs
+**/.vscode/
+
+# Ignore Output Files
+MPI_Builds/Output_Files/
+MPI_Builds/Cali_Files/
