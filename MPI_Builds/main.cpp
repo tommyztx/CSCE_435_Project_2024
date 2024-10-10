@@ -78,6 +78,7 @@ int main(int argc, char *argv[]) {
     adiak::value("implementation_source", "handwritten"); // Where you got the source code of your algorithm. choices: ("online", "ai", "handwritten").
 
     // Build input array
+    srand(time(NULL));
     unsigned int* input_array = nullptr;
     if (rank == 0) {
         CALI_MARK_BEGIN("data_init_runtime");
@@ -99,7 +100,6 @@ int main(int argc, char *argv[]) {
                 input_array[i] = i;
             }
 
-            srand(time(NULL));
             perturb_array(input_array, input_size, 1);
         }
         else if (input_type == "1_perc_perturbed") {
@@ -107,7 +107,6 @@ int main(int argc, char *argv[]) {
                 input_array[i] = i;
             }
 
-            srand(time(NULL));
             perturb_array(input_array, input_size, 0.01);
         }
         else {
