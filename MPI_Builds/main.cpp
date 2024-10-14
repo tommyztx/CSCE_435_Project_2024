@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
         adiak::value("scalability", "strong or weak?"); // The scalability of your algorithm. choices: ("strong", "weak")
     }
     else if (algorithm == "radix") {
-        radix_sort(input_array, input_size);
+        radix_sort(input_array, input_size, rank, num_procs);
         adiak::value("scalability", "strong or weak?"); // The scalability of your algorithm. choices: ("strong", "weak")
     }
     else {
