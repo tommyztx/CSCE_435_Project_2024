@@ -9,20 +9,20 @@ void collect_sample(unsigned int* arr, unsigned int n, unsigned int* sample, uns
 }
 
 
+// No longer using as std::sort() had SIGNIFICANTLY better performance
+// void insertion_sort(unsigned int* arr, unsigned int n) {
+//     for (unsigned int i = 1; i < n; ++i) {
+//         unsigned int temp = arr[i];
 
-void insertion_sort(unsigned int* arr, unsigned int n) {
-    for (unsigned int i = 1; i < n; ++i) {
-        unsigned int temp = arr[i];
+//         unsigned int hole = i;
+//         while (hole > 0 && temp < arr[hole - 1]) {
+//             arr[hole] = arr[hole - 1];
+//             --hole;
+//         }
 
-        unsigned int hole = i;
-        while (hole > 0 && temp < arr[hole - 1]) {
-            arr[hole] = arr[hole - 1];
-            --hole;
-        }
-
-        arr[hole] = temp;
-    }
-}
+//         arr[hole] = temp;
+//     }
+// }
 
 
 
@@ -80,7 +80,8 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
 
     unsigned int* pivots = new unsigned int[p - 1];
     if (rank == 0) {
-        insertion_sort(sample, p * k);
+        // insertion_sort(sample, p * k);
+        std::sort(sample, sample + p * k);
 
         for (unsigned int i = 1; i < p; ++i) {
             pivots[i - 1] = sample[i * k];
@@ -122,7 +123,7 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
                 buckets[bucket].push_back(elem);
                 break;
             }
-            else if (elem == pivots[bucket]) { // Assumes there are no duplicate elements
+            else if (elem == pivots[bucket]) { // Assumes there are no duplicate elements. Remove if allowing duplicates.
                 found_bucket = true;
                 break;
             }
@@ -182,30 +183,29 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
         unsigned int my_bucket_cap = n / p;
         for (unsigned int i = 1; i < p; ++i) {
             if (i == rank) {
-                // Collect the segments of my bucket that are on other processes
-                if (buckets[i].size() > my_bucket_cap) {
-                    arr = grow_array(arr, 0, &my_bucket_cap, buckets[i].size());
-                }
-
-                // Slightly non-optimal to collect my elements here in the case that the input is sorted
-                memcpy(arr, buckets[i].data(), buckets[i].size() * sizeof(unsigned int));
-                my_bucket_size += buckets[i].size();
-                
-                // Collect the segments of my bucket that are on other processes
                 for (unsigned int j = 0; j < p; ++j) {
                     if (i == j) {
-                        continue; // Might be more optimal to collect elements I have here
-                    }
-
-                    MPI_Recv(&curr_size, 1, MPI_UNSIGNED, j, 0, MPI_COMM_WORLD, &status);
-
-                    if (curr_size > 0) {
-                        if (my_bucket_size + curr_size > my_bucket_cap) {
-                            arr = grow_array(arr, my_bucket_size, &my_bucket_cap, my_bucket_size + curr_size);
+                        // Collect the segments of my bucket that are on other processes
+                        if (my_bucket_size + buckets[i].size() > my_bucket_cap) {
+                            arr = grow_array(arr, my_bucket_size, &my_bucket_cap, my_bucket_size + buckets[i].size());
                         }
 
-                        MPI_Recv(arr + my_bucket_size, curr_size, MPI_UNSIGNED, j, 0, MPI_COMM_WORLD, &status);
-                        my_bucket_size += curr_size;
+                        memcpy(arr + my_bucket_size, buckets[i].data(), buckets[i].size() * sizeof(unsigned int));
+                        my_bucket_size += buckets[i].size();
+                    }
+
+                    else {
+                        // Collect the segments of my bucket that are on other processes
+                        MPI_Recv(&curr_size, 1, MPI_UNSIGNED, j, 0, MPI_COMM_WORLD, &status);
+
+                        if (curr_size > 0) {
+                            if (my_bucket_size + curr_size > my_bucket_cap) {
+                                arr = grow_array(arr, my_bucket_size, &my_bucket_cap, my_bucket_size + curr_size);
+                            }
+
+                            MPI_Recv(arr + my_bucket_size, curr_size, MPI_UNSIGNED, j, 0, MPI_COMM_WORLD, &status);
+                            my_bucket_size += curr_size;
+                        }
                     }
                 }
             }
@@ -231,7 +231,8 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
     CALI_MARK_BEGIN("comp_large");
 
     if (my_bucket_size > 1) {
-        insertion_sort(arr, my_bucket_size);
+        // insertion_sort(arr, my_bucket_size);
+        std::sort(arr, arr + my_bucket_size);
     }
 
     CALI_MARK_END("comp_large");
@@ -254,8 +255,8 @@ void sample_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, un
             }
 
             // Add in pivot if not the last bucket
-            if (i < p - 1) {
-                arr[my_bucket_size++] = pivots[i]; // Remove is there are duplicate elements
+            if (i < p - 1) { // Remove this if there are duplicate elements
+                arr[my_bucket_size++] = pivots[i];
             }
         }
     }

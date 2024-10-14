@@ -362,7 +362,30 @@ TODO: Add calltree
 
 #### Sample Sort
 
-TODO: Add calltree
+The following tree comes from a run with 2^28 randomly-organized elements on 64 processors. The average time per rank is displayed in the tree.
+
+```
+34.247 main
+├─ 1.406 MPI_Barrier
+├─ 0.770 MPI_Comm_dup
+├─ 0.000 MPI_Finalize
+├─ 0.000 MPI_Finalized
+├─ 0.000 MPI_Init
+├─ 0.000 MPI_Initialized
+├─ 28.302 comm
+│  ├─ 28.240 comm_large
+│  │  ├─ 0.230 MPI_Recv
+│  │  ├─ 26.362 MPI_Scatter
+│  │  └─ 1.641 MPI_Send
+│  └─ 0.062 comm_small
+│     ├─ 0.059 MPI_Bcast
+│     └─ 0.003 MPI_Gather
+├─ 1.803 comp
+│  ├─ 1.802 comp_large
+│  └─ 0.000 comp_small
+├─ 0.768 correctness_check
+└─ 26.654 data_init_runtime
+```
 
 #### Merge Sort
 
@@ -382,7 +405,39 @@ TODO: Add metadata
 
 #### Sample Sort
 
-TODO: Add metadata
+This metadata is from the same run as the calltree above.
+
+| Category                | Value |
+| ----------------------- | ----- |
+| profile                 | 4183253281 |
+| cali.caliper.version    | 2.11.0 |
+| mpi.world.size          | 64 |
+| spot.metrics            | min#inclusive#sum#time.duration,max#inclusive#sum#time.duration,avg#inclusive#sum#time.duration,sum#inclusive#sum#time.duration,variance#inclusive#sum#time.duration,min#min#aggregate.slot,min#sum#rc.count,avg#sum#rc.count,max#sum#rc.count,sum#sum#rc.count,min#scale#sum#time.duration.ns,max#scale#sum#time.duration.ns,avg#scale#sum#time.duration.ns,sum#scale#sum#time.duration.ns |
+| spot.timeseries.metrics |  |
+| spot.format.version     | 2 |
+| spot.options            | time.variance,profile.mpi,node.order,region.count,time.exclusive |
+| spot.channels           | regionprofile |
+| cali.channel            | spot |
+| spot:node.order         | TRUE |
+| spot:output             | Cali_Files/sample_Random_268435456_64.cali |
+| spot:profile.mpi        | TRUE |
+| spot:region.count       | TRUE |
+| spot:time.exclusive     | TRUE |
+| spot:time.variance      | TRUE |
+| launchdate              | 1728927077 |
+| libraries               | ['/scratch/group/csce435-f24/Caliper/caliper/lib64/libcaliper.so.2', '/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/libmpicxx.so.12', '/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/lib/release/libmpi.so.12', '/lib64/librt.so.1', '/lib64/libpthread.so.0', '/lib64/libdl.so.2', '/sw/eb/sw/GCCcore/8.3.0/lib64/libstdc++.so.6', '/lib64/libm.so.6', '/sw/eb/sw/GCCcore/8.3.0/lib64/libgcc_s.so.1', '/lib64/libc.so.6', '/sw/eb/sw/CUDA/12.4.0/extras/CUPTI/lib64/libcupti.so.12', '/sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpapi.so.6.0', '/lib64/ld-linux-x86-64.so.2', '/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/libfabric.so.1', '/lib64/libutil.so.1', '/sw/eb/sw/PAPI/6.0.0-GCCcore-8.3.0/lib/libpfm.so.4', '/lib64/libnuma.so', '/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libshm-fi.so', '/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libmlx-fi.so', '/lib64/libucp.so.0', '/sw/eb/sw/zlib/1.2.11-GCCcore-8.3.0/lib/libz.so.1', '/usr/lib64/libuct.so.0', '/usr/lib64/libucs.so.0', '/usr/lib64/libucm.so.0', '/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libverbs-fi.so', '/lib64/librdmacm.so.1', '/lib64/libibverbs.so.1', '/lib64/libnl-3.so.200', '/lib64/libnl-route-3.so.200', '/usr/lib64/libibverbs/libmlx5-rdmav34.so', '/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libpsmx2-fi.so', '/lib64/libpsm2.so.2', '/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libsockets-fi.so', '/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/librxm-fi.so', '/sw/eb/sw/impi/2019.9.304-iccifort-2020.4.304/intel64/libfabric/lib/prov/libtcp-fi.so', '/usr/lib64/ucx/libuct_ib.so.0', '/usr/lib64/ucx/libuct_rdmacm.so.0', '/usr/lib64/ucx/libuct_cma.so.0', '/usr/lib64/ucx/libuct_knem.so.0', '/usr/lib64/ucx/libuct_xpmem.so.0', '/usr/lib64/libxpmem.so.0'] |
+| cmdline                 | ['./sort', 'sample', 'Random', '268435456'] |
+| cluster                 | c |
+| algorithm               | sample |
+| programming_model       | mpi |
+| data_type               | unsigned int |
+| size_of_data_type       | 4 |
+| input_size              | 268435456 |
+| input_type              | Random |
+| num_procs               | 64 |
+| group_num               | 10 |
+| implementation_source   | handwritten |
+| scalability             | strong |		
 
 #### Merge Sort
 
