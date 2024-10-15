@@ -12,6 +12,10 @@
 
 // TODO: Edit function signature and add helper functions as necessary
 
-void radix_sort(unsigned int* arr, unsigned int n);
+void counting_sort_digit(unsigned int* arr, unsigned int n, unsigned int exp);
+
+void radix_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, unsigned int p);
+
+void radix_sort(unsigned int* arr, unsigned int n, unsigned int rank, unsigned int p);
 
 #endif
