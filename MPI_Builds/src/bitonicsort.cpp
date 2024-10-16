@@ -1,5 +1,4 @@
 #include "bitonicsort.h"
-#include <cmath>
 
 void compAndSwap(unsigned int a[], unsigned int i, unsigned int j, bool dir)
 {
@@ -51,14 +50,25 @@ void bitonic_sort(unsigned int arr[], unsigned int n, unsigned int rank, unsigne
     CALI_MARK_BEGIN("comp");
     CALI_MARK_BEGIN("comp_small");
 
-    bitonic_sort_helper(local_arr, 0, elem_per_proc, true);
+    bitonic_sort_helper(local_arr, 0, elem_per_proc, 1);
 
     CALI_MARK_END("comp_small");
     CALI_MARK_END("comp");
 
-    for (int i = 1; i <= std::log2(p); i++)
+    int phases = 0;
+    while (p > 1)
     {
-        int group_size = pow(2, i);
+        p /= 2;
+        phases++;
+    }
+
+    for (int i = 1; i <= phases; i++)
+    {
+        int group_size = 1;
+        for (int i = 0; i < phase; i++)
+        {
+            group_size *= 2;
+        }
         int group_start = (rank / group_size) * group_size;
         int partner;
 
