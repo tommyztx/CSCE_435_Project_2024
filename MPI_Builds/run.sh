@@ -16,8 +16,8 @@ replace_mem="MEM-NEEDED"
 # Command Line Argument Options
 sort_names=("bitonic" "sample" "merge" "radix") # (bitonic sample merge radix)
 input_types=("Sorted") # (Sorted ReverseSorted Random 1_perc_perturbed)
-input_sizes=($((2**4))) # (2^16 2^18 2^20 2^22 2^24 2^26 2^28)
-num_processes=(4) # (2 4 8 16 32 64 128 256 512 1024)
+input_sizes=($((2**28))) # (2^16 2^18 2^20 2^22 2^24 2^26 2^28)
+num_processes=(64) # (2 4 8 16 32 64 128 256 512 1024)
 
 # Making sure everything is set up properly
 make
