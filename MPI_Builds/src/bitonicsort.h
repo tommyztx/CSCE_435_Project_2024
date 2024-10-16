@@ -12,12 +12,11 @@
 
 // TODO: Edit function signature and add helper functions as necessary
 
-void bitonic_sort(unsigned int *arr, unsigned int n);
+void bitonic_sort(unsigned int arr[], unsigned int n, unsigned int rank, unsigned int p);
 
-void bitonic_merge(unsigned int *arr, unsigned int low, unsigned int cnt, bool dir);
+void bitonic_merge(int arr[], int low, int cnt, bool dir);
+void bitonic_sort_helper(unsigned int arr[], unsigned int low, unsigned int cnt, bool dir);
 
-void bitonic_sort_seq(unsigned int *arr, unsigned int low, unsigned int cnt, bool dir);
-
-void bitonic_sort_parallel(unsigned int *arr, unsigned int n, unsigned int rank, unsigned int p);
+void compAndSwap(int a[], int i, int j, bool dir);
 
 #endif
