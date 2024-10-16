@@ -14,9 +14,9 @@
 
 void bitonic_sort(unsigned int arr[], unsigned int n, unsigned int rank, unsigned int p);
 
-void bitonic_merge(int arr[], int low, int cnt, bool dir);
+void bitonic_merge(unsigned int arr[], unsigned int low, unsigned int cnt, bool dir);
 void bitonic_sort_helper(unsigned int arr[], unsigned int low, unsigned int cnt, bool dir);
 
-void compAndSwap(int a[], int i, int j, bool dir);
+void compAndSwap(unsigned int a[], unsigned int i, unsigned int j, bool dir);
 
 #endif

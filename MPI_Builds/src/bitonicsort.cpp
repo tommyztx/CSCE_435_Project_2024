@@ -1,7 +1,7 @@
 #include "bitonicsort.h"
 #include <cmath>
 
-void compAndSwap(int a[], int i, int j, bool dir)
+void compAndSwap(unsigned int a[], unsigned int i, unsigned int j, bool dir)
 {
     if (dir == (a[i] > a[j]))
     {
@@ -9,12 +9,12 @@ void compAndSwap(int a[], int i, int j, bool dir)
     }
 }
 
-void bitonic_merge(int arr[], int low, int cnt, bool dir)
+void bitonic_merge(unsigned int arr[], unsigned int low, unsigned int cnt, bool dir)
 {
     if (cnt > 1)
     {
-        int k = cnt / 2;
-        for (int i = low; i < low + k; i++)
+        unsigned int k = cnt / 2;
+        for (unsigned int i = low; i < low + k; i++)
         {
             compAndSwap(arr, i, i + k, dir);
         }
