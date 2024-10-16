@@ -177,6 +177,7 @@ int main(int argc, char *argv[])
 
         if (sorted)
         {
+            printf("input size: " + input_size + "\n");
             printf("Array correctly sorted.\n");
         }
         else

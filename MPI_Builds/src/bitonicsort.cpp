@@ -17,6 +17,7 @@ void bitonic_merge(unsigned int arr[], unsigned int low, unsigned int cnt, bool 
         {
             compAndSwap(arr, i, i + k, dir);
         }
+
         bitonic_merge(arr, low, k, dir);
         bitonic_merge(arr, low + k, k, dir);
     }
@@ -56,19 +57,21 @@ void bitonic_sort(unsigned int arr[], unsigned int n, unsigned int rank, unsigne
     CALI_MARK_END("comp");
 
     int phases = 0;
-    while (p > 1)
+    int proc_count = p;
+    while (proc_count > 1)
     {
-        p /= 2;
+        proc_count /= 2;
         phases++;
     }
 
-    for (int i = 1; i <= phases; i++)
+    for (int phase = 1; phase <= phases; phase++)
     {
         int group_size = 1;
-        for (int i = 0; i < phase; i++)
+        for (int j = 0; j < phase; j++)
         {
             group_size *= 2;
         }
+
         int group_start = (rank / group_size) * group_size;
         int partner;
 
@@ -82,30 +85,28 @@ void bitonic_sort(unsigned int arr[], unsigned int n, unsigned int rank, unsigne
         }
 
         unsigned int *recv_buffer = new unsigned int[elem_per_proc];
-        CALI_MARK_BEGIN("comm");
-        CALI_MARK_BEGIN("comm_large");
 
         MPI_Sendrecv(local_arr, elem_per_proc, MPI_UNSIGNED, partner, 0,
                      recv_buffer, elem_per_proc, MPI_UNSIGNED, partner, 0,
                      MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-        CALI_MARK_END("comm_large");
-        CALI_MARK_END("comm");
-
         if (rank < partner)
         {
-            for (unsigned int i = 0; i < elem_per_proc; i++)
+            for (unsigned int l = 0; l < elem_per_proc; l++)
             {
-                local_arr[i] = std::min(local_arr[i], recv_buffer[i]);
+                local_arr[l] = std::min(local_arr[l], recv_buffer[l]);
             }
         }
         else
         {
-            for (unsigned int i = 0; i < elem_per_proc; i++)
+            for (unsigned int l = 0; l < elem_per_proc; l++)
             {
-                local_arr[i] = std::max(local_arr[i], recv_buffer[i]);
+                local_arr[l] = std::max(local_arr[l], recv_buffer[l]);
             }
         }
+
+        MPI_Barrier(MPI_COMM_WORLD);
+
         delete[] recv_buffer;
     }
 
