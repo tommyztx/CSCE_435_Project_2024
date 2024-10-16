@@ -102,7 +102,7 @@ void bitonic_sort(unsigned int arr[], unsigned int n, unsigned int rank, unsigne
     CALI_MARK_BEGIN("comp");
     CALI_MARK_BEGIN("comp_large");
 
-    MPI_Gather(local_arr, elem_per_proc, MPI_UNSIGNED, arr, elem_per_procelem_per_proc, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+    MPI_Gather(local_arr, elem_per_proc, MPI_UNSIGNED, arr, elem_per_proc, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
 
     CALI_MARK_END("comp_large");
     CALI_MARK_END("comp");
