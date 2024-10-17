@@ -409,6 +409,8 @@ The following tree comes from a run with 2^28 randomly-organized elements on 64 
 
 #### Merge Sort
 
+The following tree comes from a run of merge sort with 2^28 random unsigned integer elements on 64 processors. The average time per rank is displayed in the tree.
+
 ```
 155.835 main
 ├─ 24.103 MPI_Barrier
@@ -534,6 +536,8 @@ This metadata is from the same run as the calltree above.
 | scalability             | strong |		
 
 #### Merge Sort
+
+This metadata is from the same run as the Merge calltree above.
 
 | Category                | Value |
 | ----------------------- | ----- |
