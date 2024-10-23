@@ -617,9 +617,59 @@ TODO: Analysis
 
 ### Sample Sort
 
-TODO: Analysis
+For the analysis of my sample sort's performance, I will be using a subset of graphs generated using Thicket. I was able to perform all 280 runs and retrieve all 280 Cali files. All of the graphs I will present use strong scaling.
 
-![Some Alt Text](Graphs/Sample/temp.png "Some Title")
+#### Overall Performance
+
+We will begin by analizing the overall performance of the sort by looking at the main region. When looking at the main region, we see that there does seem to be some good speedup as the number of processes increase. After a certain number of processors, however, this speed up breaks down and we see our performance begin to get continualy poorer.
+
+Another interesting observation is the difference in performance across the various input types. The sorted, reverse sorted, and 1 % perturbed input arrays seem to have roughly the same performance. On the other hand, the random input is significantly slower than the rest.
+
+Keeping these two trends in mind, we will examine the performance of computation-based and communication-based regions of the code independently in order to isolate where our performance issues are coming from.
+
+![Sample Sort, Average Time, Main Region, 2^24 Elements](Graphs/Sample/Sample_Average_main_2^24.png "Sample Sort, Average Time, Main Region, 2^24 Elements")
+
+![Sample Sort, Average Time, Main Region, 2^28 Elements](Graphs/Sample/Sample_Average_main_2^28.png "Sample Sort, Average Time, Main Region, 2^28 Elements")
+
+#### Computation Performance
+
+Looking at the computation-based performance, we actually see the trend we're looking for.
+
+The speedup as the number of processes increases does not break down as the number of processes passes a certain threshold as we saw in the overall performance. We see roughly exponential decay in the average computation time as the number of processes grows exponentially. In the context of our sort, this means that the actual sorting of each bucket is speeding up, hinting at the fact that the elements in our array is being nicely distributed across our buckets.
+
+This being said, it is important to notice that past a certain point the decrease in actual computation time is minimal as the sorting time for each bucket is so low. This hints at the fact that the decrease in computation time eventually becomes outweighed by a larger increase in communication time, but we will further explore this theory in the next section.
+
+We don't see any significant difference in computation time when it comes to the input type. This is likely due to the fact that the process of sorting each bucket does not change and the sort underlying std::sort is probably well designed to handle inputs of various types/orientations.
+
+![Sample Sort, Average Time, Comp Region, 2^24 Elements](Graphs/Sample/Sample_Average_comp_2^24.png "Sample Sort, Average Time, Comp Region, 2^24 Elements")
+
+![Sample Sort, Average Time, Comp Region, 2^28 Elements](Graphs/Sample/Sample_Average_comp_2^28.png "Sample Sort, Average Time, Comp Region, 2^28 Elements")
+
+#### Communication Performance
+
+A quick look at the communication-based performance hints at where our performance issues are coming from.
+
+As the number of processes grows, the average communication time of our algorithm roughly increases. This makes sense, as there will be more processes that need to communicate. Each process has a bucket, so the communication overhead to send each process their bucket and then merge each process's bucket back together is going to be quite large. Even if the size of each communication is decreasing as the number of processes increases, the amount of communication is greatly increases.
+
+This verifies the theory brought up in the previous section. Though the computation time is continualy decreasing as the number of processes increases, the communication overhead is increasing. When the reduction in bucket size is significant, the reduction in computation time outweighs the increase in communication overhead and the overall performance improves. Once the bucket size reaches a certain "small enough" bucket size, though, the communication overhead outweighs the computation speedup and the overall performance suffers. The number of processors needed for this "small enough" bucket size increases as the input size increases, which is why the cutoff for overall performance increase exists at a higher number of processors for larger input sizes.
+
+We also seem to have found the culprit for why the random input is taking longer than the other inputs. I am not exactly certain why this is the case. It could have something to do with the way the computational regions are resulting in the communications being reached. It could also have to do with less empty buckets resulting in more communication between processes to send their buckets (algorithm does not send empty buckets). I do not have a clear answer of why this is the case, but it is clear that this is the origin of the difference in random input performance that we saw when looking at the overall performance.
+
+![Sample Sort, Average Time, Comm Region, 2^24 Elements](Graphs/Sample/Sample_Average_comm_2^24.png "Sample Sort, Average Time, Comm Region, 2^24 Elements")
+
+![Sample Sort, Average Time, Comm Region, 2^28 Elements](Graphs/Sample/Sample_Average_comm_2^28.png "Sample Sort, Average Time, Comm Region, 2^28 Elements")
+
+#### Variation in Performance Metrics
+
+To finish off my analysis, we will take a quick look at the variance in performance time across processes.
+
+There seems to be a slight increase in variance as the number of processes increase for each of the regions. With the lower number of processes, it is hard to interpret the variance as there are very few data points. The spike in the computation region is likely due to the root processes having more work to do to facilitate the sort.
+
+![Sample Sort, Variance in Time, Main Region, 2^28 Elements](Graphs/Sample/Sample_Variance_main_2^28.png "Sample Sort, Variance in Time, Main Region, 2^28 Elements")
+
+![Sample Sort, Variance in Time, Comp Region, 2^28 Elements](Graphs/Sample/Sample_Variance_comp_2^28.png "Sample Sort, Variance in Time, Comp Region, 2^28 Elements")
+
+![Sample Sort, Variance in Time, Comm Region, 2^28 Elements](Graphs/Sample/Sample_Variance_comm_2^28.png "Sample Sort, Variance in Time, Comm Region, 2^28 Elements")
 
 ### Merge Sort
 
