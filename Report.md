@@ -653,6 +653,46 @@ Overall, This benchmark was successful, but would have benefitted from less cong
 
 ### Radix Sort
 
-TODO: Analysis
+Strong Scale Analysis (Input Sizes, num procs, comp, comm, main), Note: 1024 processes were timing out due to grace resources not being available
 
-![Some Alt Text](Graphs/Radix/temp.png "Some Title")
+#### Strong Scale Main
+
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^16.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^18.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^20.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^22.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^24.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^26.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^28.png "Some Title")
+
+#### Observations
+
+It seems that Across the different input sizes for the Main section time for each size as the number of processes increases, There is an initial increase in time in sizes beofre 2^20, This seems to show the inefficiency of increasing the number of processes past what seems like 32 making it more costly than beneficial as the size does not require that many processes. When we get past 2^20, the increase is more linear and steady. Interestingly enough, Reverse Sorting which should have had the worst results performed quite well through each of the inputs, which suggests a beneficial usefulness to processes in the sorting process for reverse sorting as opposed to the other input_types.
+
+#### Strong Scale Comp
+
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^16.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^18.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^20.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^22.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^24.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^26.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^28.png "Some Title")
+
+#### Observations
+
+The Computation time for each of the sizes seems to the exponentially decreasing with an increasing number of processes, and for the radix sort this is consistent. We can also notice through strong scaling that for some instances such as 1_perc_perturbed at 2^22 and Sorted at 2^24 have a small amount of spike compared to the other types.
+
+#### Strong Scale Comm
+
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^16.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^18.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^20.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^22.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^24.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^26.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^28.png "Some Title")
+
+#### Observations
+
+The communication time for the main section of the radix sort is quite high, especially for the larger input sizes, This is condusive with what we assumed. As the number of processes increases, the time it takes to commuinicate between processes increases. It seems to be an exponential increase as the number of processes increases
