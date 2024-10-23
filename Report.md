@@ -673,12 +673,76 @@ There seems to be a slight increase in variance as the number of processes incre
 
 ### Merge Sort
 
-TODO: Analysis
+Computation Times: Merge Sort displayed expected behaviors with the computation times: as the number of processes increases, the average time of computation decreases, as more processors divide and conquer the sorting computation. 
 
-![Some Alt Text](Graphs/Merge/temp.png "Some Title")
+![Some Alt Text](Graphs/Merge/Merge_Average_comp_2^26.png "Some Title")
+
+Communication Times: For the most part, merge sort displayed the expected trend of increasing of time taken with an increase in the number of processors. Take for example this figure: 
+
+![Some Alt Text](Graphs/Merge/Merge_Average_comm_2^18.png "Some Title")
+
+ However, some of these numbers and figures seem odd. Such as this one figure:
+
+![Some Alt Text](Graphs/Merge/Merge_Average_comm_2^26.png "Some Title")
+
+This could be due to a number of reasons, but we personally believe that this is due to the large amount of students rushing this assignment near the deadline, causing a surge in grace activity, causing possible congestion issues. This is supported by the variance of the merge sort graphs, which we will get into later in the report.
+
+Overall (Main) Times: Although there were issues with the communication times between processes, the overall trend was as expected; as the number of processes increases, the time until completion decreases up until a point, when the line flattens and there are diminishing returns. 
+
+![Some Alt Text](Graphs/Merge/Merge_Average_main_2^20.png "Some Title")
+
+Variance: As mentioned before, Grace was very congested. Many of the jobs we put into grace did not even complete, such as the 1024 process sorts, which is why the graphs only go up to 512 processes. This is reflected in the Variance, where the computation variation was very low across the board,
+
+![Some Alt Text](Graphs/Merge/Merge_Variance_comp_2^18.png "Some Title")
+
+but the communication variance was everywhere for some of the tests:
+
+![Some Alt Text](Graphs/Merge/Merge_Variance_comm_2^16.png "Some Title")
+
+Overall, This benchmark was successful, but would have benefitted from less congestion. We will definitely run our sorts again tomorrow to see if our variance and communication graphs come out less unruly.
 
 ### Radix Sort
 
-TODO: Analysis
+Strong Scale Analysis (Input Sizes, num procs, comp, comm, main), Note: 1024 processes were timing out due to grace resources not being available
 
-![Some Alt Text](Graphs/Radix/temp.png "Some Title")
+#### Strong Scale Main
+
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^16.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^18.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^20.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^22.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^24.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^26.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_main_2^28.png "Some Title")
+
+#### Observations
+
+It seems that Across the different input sizes for the Main section time for each size as the number of processes increases, There is an initial increase in time in sizes beofre 2^20, This seems to show the inefficiency of increasing the number of processes past what seems like 32 making it more costly than beneficial as the size does not require that many processes. When we get past 2^20, the increase is more linear and steady. Interestingly enough, Reverse Sorting which should have had the worst results performed quite well through each of the inputs, which suggests a beneficial usefulness to processes in the sorting process for reverse sorting as opposed to the other input_types.
+
+#### Strong Scale Comp
+
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^16.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^18.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^20.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^22.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^24.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^26.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^28.png "Some Title")
+
+#### Observations
+
+The Computation time for each of the sizes seems to the exponentially decreasing with an increasing number of processes, and for the radix sort this is consistent. We can also notice through strong scaling that for some instances such as 1_perc_perturbed at 2^22 and Sorted at 2^24 have a small amount of spike compared to the other types.
+
+#### Strong Scale Comm
+
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^16.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^18.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^20.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^22.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^24.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^26.png "Some Title")
+![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^28.png "Some Title")
+
+#### Observations
+
+The communication time for the main section of the radix sort is quite high, especially for the larger input sizes, This is condusive with what we assumed. As the number of processes increases, the time it takes to commuinicate between processes increases. It seems to be an exponential increase as the number of processes increases

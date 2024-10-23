@@ -10,85 +10,69 @@
 using namespace std;
 
 // Helper function for counting sort by digit
-void counting_sort_digit(unsigned int* arr, unsigned int n, unsigned int exp) {
-    CALI_MARK_BEGIN("comp");
-    CALI_MARK_BEGIN("comp_large");
-    
-    unsigned int output[n];
-    unsigned int count[10] = {0};
+void counting_sort(vector<unsigned int>& arr, unsigned int exp) {
+    unsigned int n = arr.size();
+    vector<unsigned int> sorted_arr(n);
+    int count[10] = {0};
 
-    // Store count of occurrences of digits
-    for (unsigned int i = 0; i < n; i++) {
-        unsigned int digit = (arr[i] / exp) % 10;
-        count[digit]++;
+    for (int i = 0; i < n; i++) {
+        count[(arr[i] / exp) % 10]++;
     }
 
-    // Change count so that it contains actual position of the digits
-    for (unsigned int i = 1; i < 10; i++) {
+    
+    for (int i = 1; i < 10; i++) {
         count[i] += count[i - 1];
     }
 
-    // Build the output array
+
     for (int i = n - 1; i >= 0; i--) {
-        unsigned int digit = (arr[i] / exp) % 10;
-        output[count[digit] - 1] = arr[i];
-        count[digit]--;
+        sorted_arr[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
     }
 
-    // Copy the output array to arr[]
-    for (unsigned int i = 0; i < n; i++) {
-        arr[i] = output[i];
+    for (int i = 0; i < n; i++) {
+        arr[i] = sorted_arr[i];
     }
-    
-    CALI_MARK_END("comp_large");
-    CALI_MARK_END("comp");
 }
 
 // Function to perform distributed radix sort
-void radix_sort_helper(unsigned int* arr, unsigned int n, unsigned int rank, unsigned int p) {
+void radix_sort_helper(vector<unsigned int>& arr, unsigned int n, unsigned int rank, unsigned int p) {
 
+    unsigned int local_max = *std::max_element(arr.begin(), arr.end());
 
-    CALI_MARK_BEGIN("comp");
-    CALI_MARK_BEGIN("comp_small");
-    
-    unsigned int max_val;
-    unsigned int local_max = *std::max_element(arr, arr + n / p);
-
-    CALI_MARK_END("comp_small");
-    CALI_MARK_END("comp");
-    
-    CALI_MARK_BEGIN("comm");
-    CALI_MARK_BEGIN("comm_small");
-    // Find global max using MPI_Allreduce
-    MPI_Allreduce(&local_max, &max_val, 1, MPI_UNSIGNED, MPI_MAX, MPI_COMM_WORLD);
-    CALI_MARK_END("comm_small");
-    CALI_MARK_END("comm");
     // Iterate over each digit (LSD to MSD)
-    for (unsigned int exp = 1; max_val / exp > 0; exp *= 10) {
+    for (unsigned int exp = 1; local_max / exp > 0; exp *= 10) {
         // Perform counting sort on the current digit
-        counting_sort_digit(arr, n / p, exp);
-
-        CALI_MARK_BEGIN("comm");
-        CALI_MARK_BEGIN("comm_large");
-        // Gather sorted arrays from each process
-        unsigned int* global_sorted = nullptr;
-        if (rank == 0) {
-            global_sorted = new unsigned int[n];
-        }
-
-        MPI_Gather(arr, n / p, MPI_UNSIGNED, global_sorted, n / p, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
-
-        // Redistribute the sorted array for the next digit's iteration
-        MPI_Scatter(global_sorted, n / p, MPI_UNSIGNED, arr, n / p, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
-
-        if (rank == 0) {
-            delete[] global_sorted;
-        }
-        
-        CALI_MARK_END("comm_large");
-        CALI_MARK_END("comm");
+        counting_sort(arr, exp);
     }
 
+}
+
+//Merge function
+vector<unsigned int> merge(const vector<unsigned int>& left, const vector<unsigned int>& right) {
+    vector<unsigned int> result;
+    int i = 0, j = 0;
+
+    while (i < left.size() && j < right.size()) {
+        if (left[i] < right[j]) {
+            result.push_back(left[i]);
+            i++;
+        } else {
+            result.push_back(right[j]);
+            j++;
+        }
+    }
+
+    while (i < left.size()) {
+        result.push_back(left[i]);
+        i++;
+    }
+    while (j < right.size()) {
+        result.push_back(right[j]);
+        j++;
+    }
+
+    return result;
 }
 
 void radix_sort(unsigned int* arr, unsigned int n, unsigned int rank, unsigned int p) {
@@ -96,43 +80,58 @@ void radix_sort(unsigned int* arr, unsigned int n, unsigned int rank, unsigned i
 
     unsigned int elem_per_proc = n / p;
     
-    unsigned int* recvbuf = new unsigned int[elem_per_proc];
+    vector<unsigned int> recvbuf(elem_per_proc);
     
-     CALI_MARK_BEGIN("comm");
+    CALI_MARK_BEGIN("comm");
     CALI_MARK_BEGIN("comm_small");
     
-    // Use MPI_IN_PLACE for rank 0 to avoid buffer aliasing
     MPI_Scatter(arr, elem_per_proc, MPI_UNSIGNED, 
-                recvbuf, elem_per_proc, MPI_UNSIGNED, 
+                recvbuf.data(), elem_per_proc, MPI_UNSIGNED, 
                 0, MPI_COMM_WORLD);
 
     CALI_MARK_END("comm_small");
     CALI_MARK_END("comm");
 
+    CALI_MARK_BEGIN("comp");
+    CALI_MARK_BEGIN("comp_large");
     // Perform distributed radix sort
     radix_sort_helper(recvbuf, elem_per_proc, rank, p);
-    
+    CALI_MARK_END("comp_large");
+    CALI_MARK_END("comp");
 
 
-    // Wait for all processes to finish sorting
-    MPI_Barrier(MPI_COMM_WORLD);
-
+    //Gather all the local arrays into a global array
     CALI_MARK_BEGIN("comm");
     CALI_MARK_BEGIN("comm_large");
-    // Gather the sorted array
-    if (rank == 0) {
-        // Allocate temporary buffer to gather all sorted data
-        unsigned int* global_sorted = new unsigned int[n];
-        MPI_Gather(recvbuf, elem_per_proc, MPI_UNSIGNED, global_sorted, elem_per_proc, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
-        // Copy gathered data back to arr
-        memcpy(arr, global_sorted, n * sizeof(unsigned int));
-        delete[] global_sorted;
-    } else {
-        MPI_Gather(recvbuf, elem_per_proc, MPI_UNSIGNED, nullptr, elem_per_proc, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
-    }
+    // Gather the sorted subarrays into global sorted
+    vector<unsigned int> global(n);
+
+    MPI_Gather(recvbuf.data(), elem_per_proc, MPI_UNSIGNED, global.data(), elem_per_proc, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+    
     CALI_MARK_END("comm_large");
     CALI_MARK_END("comm");
     
-    delete[] recvbuf;
+    //Merge all the subarrays into arr
+
+    if (rank == 0) {
+       vector<vector<unsigned int>> parts(p);
+        for (int i = 0; i < p; ++i)
+            parts[i] = vector<unsigned int>(global.begin() + i * elem_per_proc, global.begin() + (i+1) * elem_per_proc);
+
+        CALI_MARK_BEGIN("comp");
+        CALI_MARK_BEGIN("comp_large");
+        //Merge sorted arrays
+        vector<unsigned int> sorted = parts[0];
+        for (int i = 1; i < parts.size(); ++i) {
+            sorted = merge(sorted, parts[i]);
+        }
+      
+      // Copy final sorted result to arr
+      memcpy(arr, sorted.data(), sorted.size() * sizeof(unsigned int));
+
+      CALI_MARK_END("comp_large");
+      CALI_MARK_END("comp");
+    }
+     
 
 }
