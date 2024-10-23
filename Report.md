@@ -611,9 +611,71 @@ This metadata is from the same run as the Radix calltree above.
 
 ### Bitonic Sort
 
-TODO: Analysis
+In the analysis of my bitonic sort's performance, I used a subset of graphs generated using Thicket. I was able to perform all runs and retrieve all Cali files besides the 1024 processes due to them timing out due ot grace resources not being available. All of the graphs I will present use strong scaling.
 
-![Some Alt Text](Graphs/Bitonic/temp.png "Some Title")
+#### Strong Scale Main
+
+bitonic_Average_main_2^16
+![Some Alt Text](Graphs/bitonic/bitonic_Average_main_2^16.png "Some Title")
+bitonic_Average_main_2^18
+![Some Alt Text](Graphs/bitonic/bitonic_Average_main_2^18.png "Some Title")
+bitonic_Average_main_2^20
+![Some Alt Text](Graphs/bitonic/bitonic_Average_main_2^20.png "Some Title")
+bitonic_Average_main_2^22
+![Some Alt Text](Graphs/bitonic/bitonic_Average_main_2^22.png "Some Title")
+bitonic_Average_main_2^24
+![Some Alt Text](Graphs/bitonic/bitonic_Average_main_2^24.png "Some Title")
+bitonic_Average_main_2^26
+![Some Alt Text](Graphs/bitonic/bitonic_Average_main_2^26.png "Some Title")
+bitonic_Average_main_2^28
+![Some Alt Text](Graphs/bitonic/bitonic_Average_main_2^28.png "Some Title")
+
+#### Observations
+
+The trend between the graphs and different input sizes for the Main scale which is as the number of processes increases, there is an initial increase in time in sizes before 2^22. This could be because of the inefficiency of increasing the number of processes initially making it more costly than beneficial as the size doesn't require that many processes. However after 2^22, the average time decreases with the number of processes increasing. Random sorted did the best out of all the sorted methods which is increasing which shows a useful efficiency improvement to processes in the sorting process for random sorting as opposed to other input types. However, another interesting observation is the difference in performance across some input types: sorted, reverse sorted, and 1 % perturbed input arrays seem to have on average the same performance.
+
+#### Strong Scale Comp
+
+bitonic_Average_comp_2^16
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comp_2^16.png "Some Title")
+bitonic_Average_comp_2^18
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comp_2^18.png "Some Title")
+bitonic_Average_comp_2^20
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comp_2^20.png "Some Title")
+bitonic_Average_comp_2^22
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comp_2^22.png "Some Title")
+bitonic_Average_comp_2^24
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comp_2^24.png "Some Title")
+bitonic_Average_comp_2^26
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comp_2^26.png "Some Title")
+bitonic_Average_comp_2^28
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comp_2^28.png "Some Title")
+
+#### Observations
+
+Overall the trend for these graphs are the computation time for each of the sizes seem to be exponentially decreasing with an increasing number of processes. For all of the graphs in bitonic sort this trend is consistent. The trend also shows that on average all of the input types roughly have the same performance without any deviations or spikes.
+
+#### Strong Scale Comm
+
+bitonic_Average_comm_2^16
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comm_2^16.png "Some Title")
+bitonic_Average_comm_2^18
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comm_2^18.png "Some Title")
+bitonic_Average_comm_2^20
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comm_2^20.png "Some Title")
+bitonic_Average_comm_2^22
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comm_2^22.png "Some Title")
+bitonic_Average_comm_2^24
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comm_2^24.png "Some Title")
+bitonic_Average_comm_2^26
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comm_2^26.png "Some Title")
+Radix_Average_comm_2^28
+![Some Alt Text](Graphs/bitonic/bitonic_Average_comm_2^28.png "Some Title")
+
+#### Observations
+
+In graphs 2^22 and above, the time for random sorting is quite high, which is a general trends for the larger input sizes. This makes sense as the number of processes increase, teh time it takes to communicate between processes increases, thus overall increases the time. In the early graphs before 2^22, it shows a trend of spikes with reverse sorted having the highest spike in 2^20, sorted having a spike in 2^16 and random sorting being the highest in 2^18 while also having a spike.
+
 
 ### Sample Sort
 
