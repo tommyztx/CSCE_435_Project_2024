@@ -721,12 +721,19 @@ It seems that Across the different input sizes for the Main section time for eac
 
 #### Strong Scale Comp
 
+Radix_Average_comp_2^16
 ![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^16.png "Some Title")
+Radix_Average_comp_2^18
 ![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^18.png "Some Title")
+Radix_Average_comp_2^20
 ![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^20.png "Some Title")
+Radix_Average_comp_2^22
 ![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^22.png "Some Title")
+Radix_Average_comp_2^24
 ![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^24.png "Some Title")
+Radix_Average_comp_2^26
 ![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^26.png "Some Title")
+Radix_Average_comp_2^28
 ![Some Alt Text](Graphs/Radix/Radix_Average_comp_2^28.png "Some Title")
 
 #### Observations
@@ -735,12 +742,19 @@ The Computation time for each of the sizes seems to the exponentially decreasing
 
 #### Strong Scale Comm
 
+Radix_Average_comm_2^16
 ![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^16.png "Some Title")
+Radix_Average_comm_2^18
 ![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^18.png "Some Title")
+Radix_Average_comm_2^20
 ![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^20.png "Some Title")
+Radix_Average_comm_2^22
 ![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^22.png "Some Title")
+Radix_Average_comm_2^24
 ![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^24.png "Some Title")
+Radix_Average_comm_2^26
 ![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^26.png "Some Title")
+Radix_Average_comm_2^28
 ![Some Alt Text](Graphs/Radix/Radix_Average_comm_2^28.png "Some Title")
 
 #### Observations
