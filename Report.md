@@ -609,37 +609,26 @@ This metadata is from the same run as the Radix calltree above.
 
 ## 4. Performance evaluation
 
-Include detailed analysis of computation performance, communication performance. 
-Include figures and explanation of your analysis.
+### Bitonic Sort
 
-### 4a. Vary the following parameters
-For input_size's:
-- 2^16, 2^18, 2^20, 2^22, 2^24, 2^26, 2^28
+TODO: Analysis
 
-For input_type's:
-- Sorted, Random, Reverse sorted, 1%perturbed
+![Some Alt Text](Graphs/Bitonic/temp.png "Some Title")
 
-MPI: num_procs:
-- 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024
+### Sample Sort
 
-This should result in 4x7x10=280 Caliper files for your MPI experiments.
+TODO: Analysis
 
-### 4b. Hints for performance analysis
+![Some Alt Text](Graphs/Sample/temp.png "Some Title")
 
-To automate running a set of experiments, parameterize your program.
+### Merge Sort
 
-- input_type: "Sorted" could generate a sorted input to pass into your algorithms
-- algorithm: You can have a switch statement that calls the different algorithms and sets the Adiak variables accordingly
-- num_procs: How many MPI ranks you are using
+TODO: Analysis
 
-When your program works with these parameters, you can write a shell script 
-that will run a for loop over the parameters above (e.g., on 64 processors, 
-perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).  
+![Some Alt Text](Graphs/Merge/temp.png "Some Title")
 
-### 4c. You should measure the following performance metrics
-- `Time`
-    - Min time/rank
-    - Max time/rank
-    - Avg time/rank
-    - Total time
-    - Variance time/rank
+### Radix Sort
+
+TODO: Analysis
+
+![Some Alt Text](Graphs/Radix/temp.png "Some Title")
