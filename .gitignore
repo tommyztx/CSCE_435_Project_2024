@@ -1,5 +1,6 @@
 # Ignore VS Code configs
 **/.vscode/
+**/.venv/
 
 # Ignore Output Files
 MPI_Builds/Output_Files/
