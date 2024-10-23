@@ -623,9 +623,33 @@ TODO: Analysis
 
 ### Merge Sort
 
-TODO: Analysis
+Computation Times: Merge Sort displayed expected behaviors with the computation times: as the number of processes increases, the average time of computation decreases, as more processors divide and conquer the sorting computation. 
 
-![Some Alt Text](Graphs/Merge/temp.png "Some Title")
+![Some Alt Text](Graphs/Merge/Merge_Average_comp_2^26.png "Some Title")
+
+Communication Times: For the most part, merge sort displayed the expected trend of increasing of time taken with an increase in the number of processors. Take for example this figure: 
+
+![Some Alt Text](Graphs/Merge/Merge_Average_comm_2^18.png "Some Title")
+
+ However, some of these numbers and figures seem odd. Such as this one figure:
+
+![Some Alt Text](Graphs/Merge/Merge_Average_comm_2^26.png "Some Title")
+
+This could be due to a number of reasons, but we personally believe that this is due to the large amount of students rushing this assignment near the deadline, causing a surge in grace activity, causing possible congestion issues. This is supported by the variance of the merge sort graphs, which we will get into later in the report.
+
+Overall (Main) Times: Although there were issues with the communication times between processes, the overall trend was as expected; as the number of processes increases, the time until completion decreases up until a point, when the line flattens and there are diminishing returns. 
+
+![Some Alt Text](Graphs/Merge/Merge_Average_main_2^20.png "Some Title")
+
+Variance: As mentioned before, Grace was very congested. Many of the jobs we put into grace did not even complete, such as the 1024 process sorts, which is why the graphs only go up to 512 processes. This is reflected in the Variance, where the computation variation was very low across the board,
+
+![Some Alt Text](Graphs/Merge/Merge_Variance_comp_2^18.png "Some Title")
+
+but the communication variance was everywhere for some of the tests:
+
+![Some Alt Text](Graphs/Merge/Merge_Variance_comm_2^16.png "Some Title")
+
+Overall, This benchmark was successful, but would have benefitted from less congestion. We will definitely run our sorts again tomorrow to see if our variance and communication graphs come out less unruly.
 
 ### Radix Sort
 
