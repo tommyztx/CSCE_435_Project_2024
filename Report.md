@@ -822,3 +822,33 @@ Radix_Average_comm_2^28
 #### Observations
 
 The communication time for the main section of the radix sort is quite high, especially for the larger input sizes, This is condusive with what we assumed. As the number of processes increases, the time it takes to commuinicate between processes increases. It seems to be an exponential increase as the number of processes increases
+
+## 5. Final Reflections
+
+### Comparative Analysis
+
+#### Strong Scaling
+
+TODO
+
+#### Weak Scaling
+
+TODO
+
+### Individual Reflections
+
+#### Bitonic Sort
+
+TODO
+
+#### Sample Sort
+
+TODO
+
+#### Merge Sort
+
+TODO
+
+#### Radix Sort
+
+TODO
