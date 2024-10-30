@@ -919,8 +919,52 @@ TODO
 
 #### Merge Sort
 
-TODO
+After benchmarking and analyzing the runtime data for Merge Sort, it was apparent that the algorithm had something wrong with it. As seen in the presentation, the algorithm had an unusually high runtime with lower processes, in magnitudes of thousands compared to the other algorithms. However surprisingly, this abnormality seemed to taper off after about 16 processes, which raised even more questions. After thorough analysis of the code, we found some possible problems, errors, and bottlenecks that could be causing this abnormal behavior. Below are three of the problems that were apparently obvious to us.
+
+#### Problem 1: 
+The final merge step is not parallelized this means that no matter how many processes we have, the final step remains a constant time, which is definitely a bottleneck
+
+#### Solution 1: 
+Utilize a parallelized algorithm for the final merge step. After research, we came across a possible solution: A Parallel Merge Tree. This solution would merge two processes in pairs rather than have all of the merging be done by the master process. This would potentially halve the largest bottleneck in the Merge Sort.
+
+
+#### Problem 2: 
+This merge sort does not account for several edge cases. Although this was not part of the project description, a simple change into the input sucj as an odd numbers of elements in the array would break the entire algorithm.
+
+#### Solution 2: 
+code in some fault tolerance and consider edge cases. This was forseen before the code was even written, but was not actually very necessary or impactful on the performance of the algorithm on our benchmarks
+
+
+#### Problem 3: 
+Creating new Left and Right arrays in my sequential merge for each recursive call of the function creates a LOT of overhead, which could definitely be improved.
+
+#### Solution 3: 
+reuse memory buffers and do sorting in-place instead of allocating new ones in each recursive call. We have created a basic mock implementation of this change below:
+
+```cpp
+void sequential_merge_sort(unsigned int* arr, unsigned int* aux, unsigned int left, unsigned int right) {
+    if (right - left <= 1) {
+        return;
+    }
+
+    unsigned int mid = left + (right - left) / 2;
+
+    sequential_merge_sort(arr, aux, left, mid);
+    sequential_merge_sort(arr, aux, mid, right);
+
+    merge(arr + left, aux + left, mid - left, arr + mid, right - mid);
+}
+```
+
+With all of these changes considered, the runtime and memory overhead of the algorithm should decrease significantly, however due to the inherent nature of merge sort's algorithm, it is expected that it will perform worse than other algorithms with a large amount of elements and a small amount of processes.
 
 #### Radix Sort
 
-TODO
+##### Problem and Solution
+From my individual Findings I found that my implementation of my Radix Algorithmn was less than optimal. Seeing such a high computation time and main execution time compared to the other algorithms the implementation of my algorithm was less than optimal. Going into some findings I found that there was a bottle neck in the way I was merging the sub arrays back together. Using a globally allocated array it was initializing new memory for every subarray. As a form of improvement I would look into being able to reuse buffers alot more efficiently and also merging my arrays in a non sequential manner. There was also alot of overhead when there was a high number of processors and input sizes. This was due to the inefficiency in my Send and Recieve Calls which caused alot of unnessecary overhead 
+
+##### Radix Comparison
+Despite these bottlenecks what we noticed comparing the algorithmns was that the Radix algorithm performed the worst among when the input types were not too small and the input type was not Random. With the nature of the Radix algorithmn there is a need to count and sort by every digit, which makes it so that the maximum amount of time it takes is the largest number and the largest amount of digits to know that it would benefit greatly from a parrellel implementation, however the communication between processes would increase till there is a plateau where the benefits of parallelizationare outweighed by the cost of communication between processors. We can also notice more communication between Random Input Size, this is because with a Random set of numbers, there are a higher amount of digits across the different processes, whereas Perturbed_1, Sorted, and Reverse Sorted would only have a few processes with high numbers of digits. DUring Random it is interesting to see how the nature of the algorithmn was affected by the input types. Knowing what we know parallelizing the processes would not improve the differences between the input types because there would continue to be an overall increase in avg time/rank in the Random time as compared to the other input types. It was very interesting to see the main benefit during the strong scaling analysis from Paralization yet in comparison not as well as the other algorithmns.
+
+##### Other issues
+I was not able to run the 1024 processer runs due to Grace being held up not only during the weekend, but the extravagant amountof time it took to allocate each of the runs. This could be further improved with a possible enhancement to my algorithm that I was not able to implement which is why there is not Radix 1024 processer runs or very few. 
