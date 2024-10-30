@@ -849,19 +849,25 @@ TODO
 
 After benchmarking and analyzing the runtime data for Merge Sort, it was apparent that the algorithm had something wrong with it. As seen in the presentation, the algorithm had an unusually high runtime with lower processes, in magnitudes of thousands compared to the other algorithms. However surprisingly, this abnormality seemed to taper off after about 16 processes, which raised even more questions. After thorough analysis of the code, we found some possible problems, errors, and bottlenecks that could be causing this abnormal behavior. Below are three of the problems that were apparently obvious to us.
 
-#Problem 1: The final merge step is not parallelized this means that no matter how many processes we have, the final step remains a constant time, which is definitely a bottleneck
+# Problem 1: 
+The final merge step is not parallelized this means that no matter how many processes we have, the final step remains a constant time, which is definitely a bottleneck
 
-#Solution 1: Utilize a parallelized algorithm for the final merge step. After research, we came across a possible solution: A Parallel Merge Tree. This solution would merge two processes in pairs rather than have all of the merging be done by the master process. This would potentially halve the largest bottleneck in the Merge Sort.
-
-
-#Problem 2: This merge sort does not account for several edge cases. Although this was not part of the project description, a simple change into the input sucj as an odd numbers of elements in the array would break the entire algorithm.
-
-#Solution 2: code in some fault tolerance and consider edge cases. This was forseen before the code was even written, but was not actually very necessary or impactful on the performance of the algorithm on our benchmarks
+# Solution 1: 
+Utilize a parallelized algorithm for the final merge step. After research, we came across a possible solution: A Parallel Merge Tree. This solution would merge two processes in pairs rather than have all of the merging be done by the master process. This would potentially halve the largest bottleneck in the Merge Sort.
 
 
-#Problem 3: Creating new Left and Right arrays in my sequential merge for each recursive call of the function creates a LOT of overhead, which could definitely be improved.
+# Problem 2: 
+This merge sort does not account for several edge cases. Although this was not part of the project description, a simple change into the input sucj as an odd numbers of elements in the array would break the entire algorithm.
 
-#Solution 3: reuse memory buffers and do sorting in-place instead of allocating new ones in each recursive call. We have created a basic mock implementation of this change below:
+# Solution 2: 
+code in some fault tolerance and consider edge cases. This was forseen before the code was even written, but was not actually very necessary or impactful on the performance of the algorithm on our benchmarks
+
+
+# Problem 3: 
+Creating new Left and Right arrays in my sequential merge for each recursive call of the function creates a LOT of overhead, which could definitely be improved.
+
+# Solution 3: 
+reuse memory buffers and do sorting in-place instead of allocating new ones in each recursive call. We have created a basic mock implementation of this change below:
 
 ```cpp
 void sequential_merge_sort(unsigned int* arr, unsigned int* aux, unsigned int left, unsigned int right) {
