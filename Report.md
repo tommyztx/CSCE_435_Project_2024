@@ -921,7 +921,15 @@ TODO
 
 #### Bitonic Sort
 
-TODO
+##### Problem and Solution
+Through benchmarking and graphing the results of the efficiency / runtime of my algorithm, it showed a general trend that as the number of processes increased for the parallelism of the algorithm, the more efficient the runtime got. I also saw that it was apparent that the algorithm had a high runtime with low number of processes, as well as a low sample size. This could be due to the fact that there wasn't that much of a sample size to divide the workload between processes, so the effects of parallelism are low which could relfect the results from the graphs with a lower sample size. Also with the high runtime in lower processes, with analysis of the code, we found some possible problems, errors, and bottlenecks within the code that could cause the results. Some of the problems could be the local sorting and the efficiency of the local sorting algorithms which could be improved, also partioning the data could have been optimized better.
+
+##### Bitonic Comparison
+Overall the performance for my Bitonic Sort was similar to the other alogrithms. The average time for all of the strong scaling graphs, random, sorted, 1% perturbed, and reverse sorted started high with a low number of processes, then improved in efficiency as the number of processes increases. Also for the speed up graphs for bitonic sort, they all increased as the number of processes increases, which shows the algorithm becomes more efficient when there are more processes. This directly related to the parallelism of the algorithm as the workload got split into multiple processes increasing the efficiency of the runtime.
+
+##### Other issues / Conclusions
+I was not able to run the 1024 processer runs due to Grace being held up not only during the weekend, but also because of the long amount of time it took to allocate each of the runs. I could have improved my algorithm, but I wasn't able to implement it within the code which is why there is not Bitonic 1024 processer runs or very few. I could have further improved the algorithm by Reducing MPI communication overload, optimizing data partioning, reducing memory usage, and optimizing local sorting with efficient algorithms.
+
 
 #### Sample Sort
 
