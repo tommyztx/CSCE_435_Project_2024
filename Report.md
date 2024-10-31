@@ -827,13 +827,85 @@ The communication time for the main section of the radix sort is quite high, esp
 
 ### Comparative Analysis
 
+In this section, we will be comparing the performance of our algorithms to draw observations on how our differing algorithms/implementations affected performance.
+
 #### Strong Scaling
 
+First, we will compare the performance of our algorithms under strong scaling. This will include analysis of the overall (main) performance as well as the isolated performance of both computation and communication.
+
+##### Overall
+
 TODO
+
+![Some Alt Text](Graphs/All/strong_main_sorted.png "Some Title")
+
+![Some Alt Text](Graphs/All/strong_main_random.png "Some Title")
+
+![Some Alt Text](Graphs/All/strong_main_1_perc.png "Some Title")
+
+![Some Alt Text](Graphs/All/strong_main_rev.png "Some Title")
+
+TODO
+
+![Some Alt Text](Graphs/All/speed_main_sorted.png "Some Title")
+
+![Some Alt Text](Graphs/All/speed_main_random.png "Some Title")
+
+![Some Alt Text](Graphs/All/speed_main_1_perc.png "Some Title")
+
+![Some Alt Text](Graphs/All/speed_main_rev.png "Some Title")
+
+##### Computation
+
+TODO
+
+![Some Alt Text](Graphs/All/strong_comp_sorted.png "Some Title")
+
+![Some Alt Text](Graphs/All/strong_comp_random.png "Some Title")
+
+![Some Alt Text](Graphs/All/strong_comp_1_perc.png "Some Title")
+
+![Some Alt Text](Graphs/All/strong_comp_rev.png "Some Title")
+
+##### Communication
+
+TODO
+
+![Some Alt Text](Graphs/All/strong_comm_sorted.png "Some Title")
+
+![Some Alt Text](Graphs/All/strong_comm_random.png "Some Title")
+
+![Some Alt Text](Graphs/All/strong_comm_1_perc.png "Some Title")
+
+![Some Alt Text](Graphs/All/strong_comm_rev.png "Some Title")
 
 #### Weak Scaling
 
+Now, we will compare the performance our algorithms under weak scaling. For this section, we focus on the overall performance of out algorithm.
+
+##### Overall
+
 TODO
+
+![Some Alt Text](Graphs/All/weak_main_sorted.png "Some Title")
+
+![Some Alt Text](Graphs/All/weak_main_random.png "Some Title")
+
+![Some Alt Text](Graphs/All/weak_main_1_perc.png "Some Title")
+
+![Some Alt Text](Graphs/All/weak_main_rev.png "Some Title")
+
+##### Computation
+
+TODO
+
+![Some Alt Text](Graphs/All/weak_comp_sorted.png "Some Title")
+
+![Some Alt Text](Graphs/All/weak_comp_random.png "Some Title")
+
+![Some Alt Text](Graphs/All/weak_comp_1_perc.png "Some Title")
+
+![Some Alt Text](Graphs/All/weak_comp_rev.png "Some Title")
 
 ### Individual Reflections
 
