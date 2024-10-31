@@ -835,7 +835,7 @@ First, we will compare the performance of our algorithms under strong scaling. T
 
 ##### Overall
 
-TODO
+Below are the strong scaling graphs for the main (Overall) times for our runs. The 4 graphs represent the 4 different array orientations: Sorted, Random, 1% Perturbed, and Reversed (respectively). The Y axis represents time, and the X axis represents the number of processes the algorithms were run on. The number of elements in each array was standardized at 2^28 elements
 
 ![Some Alt Text](Graphs/All/strong_main_sorted.png "Some Title")
 
@@ -845,7 +845,11 @@ TODO
 
 ![Some Alt Text](Graphs/All/strong_main_rev.png "Some Title")
 
-TODO
+As you can see, the graphs look pretty similar across the board, with merge being the most improved as the number of processes increases, and the others seeming pretty flat/consistent runtime. However, Raxis Sort seems to be an exception, as our teammate who did radix sort defined his caliper regions a little differently than ours, resulting in a seemingly linearly scaling line for these set of graphs. 
+
+#### Speedup
+
+Below are the speedup graphs for the main (Overall) times for our runs. The 4 graphs represent the 4 different array orientations: Sorted, Random, 1% Perturbed, and Reversed (respectively). The Y axis represents time, and the X axis represents the number of processes the algorithms were run on. The number of elements in each array was standardized at 2^28 elements
 
 ![Some Alt Text](Graphs/All/speed_main_sorted.png "Some Title")
 
@@ -855,9 +859,11 @@ TODO
 
 ![Some Alt Text](Graphs/All/speed_main_rev.png "Some Title")
 
+As seen in the speedup graphs, the order of algorithms that most benefitted from the increase in the number of processes stayed consistent, with the order being: Merge, Biotonic, Sample, and Radix. The seemingly large amount of speedup from Merge sort can most likely be explained due to the algorithm taking an abnormally large amount of time with a smaller number of processes. Possible issues with this algorithm are listed below in the individual reflections for merge sort.
+
 ##### Computation
 
-TODO
+Below are the graphs for the computation times for our runs. The 4 graphs represent the 4 different array orientations: Sorted, Random, 1% Perturbed, and Reversed (respectively). The Y axis represents time, and the X axis represents the number of processes the algorithms were run on. The number of elements in each array was standardized at 2^28 elements
 
 ![Some Alt Text](Graphs/All/strong_comp_sorted.png "Some Title")
 
@@ -867,9 +873,11 @@ TODO
 
 ![Some Alt Text](Graphs/All/strong_comp_rev.png "Some Title")
 
+From the computation graphs, unfortunately, you cannot really tell much. The massive amount of time that Merge Sort took in this graph dwarves all of the other algorithms, making smaller differences between the other three algorithms not visible. However, one thing we could take away from this graph was that the issue with merge sort was a computational issue, and not so much a communicational issue. 
+
 ##### Communication
 
-TODO
+Below are the graphs for the computation times for our runs. The 4 graphs represent the 4 different array orientations: Sorted, Random, 1% Perturbed, and Reversed (respectively). The Y axis represents time, and the X axis represents the number of processes the algorithms were run on. The number of elements in each array was standardized at 2^28 elements
 
 ![Some Alt Text](Graphs/All/strong_comm_sorted.png "Some Title")
 
@@ -879,32 +887,43 @@ TODO
 
 ![Some Alt Text](Graphs/All/strong_comm_rev.png "Some Title")
 
+From the communication graphs, we can see that the order of algorithms that had an increase in communication overhead stayed consistent, in the order of Sample, Radix, Merge, and finally Biotonic. The last two algorithms, Merge and Biotonic, make sense having the least overhead, as these two sorts are built for parallel computing, and efficiently communicate between each other with little wasted overhead.
+
 #### Weak Scaling
 
 Now, we will compare the performance our algorithms under weak scaling. For this section, we focus on the overall performance of out algorithm.
 
 ##### Overall
 
-TODO
+As we can see in the scale of weak sorting there is a common trend among all the algorithmns, we noticed that the scaling for Radix seemed to be the most inefficient which indicates the benefit from parralelism falls off across runs with higher processes. We can also see that trend across all input types, We can see that many of the other algorithmns keep a relatively consistent scale as the number of processes increase
 
+Weak Scaling main_sorted
 ![Some Alt Text](Graphs/All/weak_main_sorted.png "Some Title")
 
+Weak Scaling main_random
 ![Some Alt Text](Graphs/All/weak_main_random.png "Some Title")
 
+Weak Scaling main_1_perc
 ![Some Alt Text](Graphs/All/weak_main_1_perc.png "Some Title")
 
+
+Weak Scaling main_reverse
 ![Some Alt Text](Graphs/All/weak_main_rev.png "Some Title")
 
 ##### Computation
 
-TODO
+THe other interesting notice we had through weak scaling is seeing the comp of our algorithmns, and as we actually see a low weak scaling difference for merge sort across the input types, This shows that there may be an inefficiency through the Load balancing of the algorithmn and extra communication overhead. Radix sort also scales the same as processers increase for sorted and random, however during 1_perc and reverse sorting inputs there is a bit of difference in how the algorithm scales. This is probably an increase in communication overhead for those inputs as the increases and outweights the benefits of parralelism in the algorithm.
 
+Weak Scaling comp Sorted
 ![Some Alt Text](Graphs/All/weak_comp_sorted.png "Some Title")
 
+Weak Scaling comp Random
 ![Some Alt Text](Graphs/All/weak_comp_random.png "Some Title")
 
+Weak Scaling comp 1_perc
 ![Some Alt Text](Graphs/All/weak_comp_1_perc.png "Some Title")
 
+Weak Scaling comp Reverse Sorted
 ![Some Alt Text](Graphs/All/weak_comp_rev.png "Some Title")
 
 ### Individual Reflections
@@ -923,7 +942,9 @@ I was not able to run the 1024 processer runs due to Grace being held up not onl
 
 #### Sample Sort
 
-TODO
+Much of my takeaways for the final iteration of the report are the same as in the performance evaluation section above. My sample sort implementation, while very fast (even in comparison with the otger algorithms), did not experience good speedup, with the speedup falling off past a certain number of processors at each process size. This was because the speedup in my algorithms computation time was overpowered by the communication overhead of communicating between the many processes' buckets. While the computation size for each process decreased roughly linearly with the number of processes, the number of MPI_Send and MPI_Recv calls grew exponentially. Add in the fact that my algorithm was already very fast in a sequential setting, and the speedup in computation was not as significant as the communication overhead until very large input sizes were reached.
+
+If I had more time to improve my implementation, I would start by exploring the tradeoff between memory allocation and the complexity of communications. When I was implementing my algorithm, I put an emphasis on attempting to allocate as little memory as possible. This included avoiding allocating communication buffers unless absolutely necessary. While this improved the spatial complexity of my implementation, the communication overhead increased due to requiring independent communication between processes. I would like to see how my performance would be impacted by allocating more communcation buffers (and therefore taking a slight hit in spatial complexity) in order to facilitate the ability to use more collective communication methods such as MPI_Gather or MPI_Reduce.
 
 #### Merge Sort
 
