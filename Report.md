@@ -915,7 +915,9 @@ TODO
 
 #### Sample Sort
 
-TODO
+Much of my takeaways for the final iteration of the report are the same as in the performance evaluation section above. My sample sort implementation, while very fast (even in comparison with the otger algorithms), did not experience good speedup, with the speedup falling off past a certain number of processors at each process size. This was because the speedup in my algorithms computation time was overpowered by the communication overhead of communicating between the many processes' buckets. While the computation size for each process decreased roughly linearly with the number of processes, the number of MPI_Send and MPI_Recv calls grew exponentially. Add in the fact that my algorithm was already very fast in a sequential setting, and the speedup in computation was not as significant as the communication overhead until very large input sizes were reached.
+
+If I had more time to improve my implementation, I would start by exploring the tradeoff between memory allocation and the complexity of communications. When I was implementing my algorithm, I put an emphasis on attempting to allocate as little memory as possible. This included avoiding allocating communication buffers unless absolutely necessary. While this improved the spatial complexity of my implementation, the communication overhead increased due to requiring independent communication between processes. I would like to see how my performance would be impacted by allocating more communcation buffers (and therefore taking a slight hit in spatial complexity) in order to facilitate the ability to use more collective communication methods such as MPI_Gather or MPI_Reduce.
 
 #### Merge Sort
 
