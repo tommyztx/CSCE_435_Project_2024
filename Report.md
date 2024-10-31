@@ -914,12 +914,16 @@ Weak Scaling main_reverse
 
 THe other interesting notice we had through weak scaling is seeing the comp of our algorithmns, and as we actually see a low weak scaling difference for merge sort across the input types, This shows that there may be an inefficiency through the Load balancing of the algorithmn and extra communication overhead. Radix sort also scales the same as processers increase for sorted and random, however during 1_perc and reverse sorting inputs there is a bit of difference in how the algorithm scales. This is probably an increase in communication overhead for those inputs as the increases and outweights the benefits of parralelism in the algorithm.
 
+Weak Scaling comp Sorted
 ![Some Alt Text](Graphs/All/weak_comp_sorted.png "Some Title")
 
+Weak Scaling comp Random
 ![Some Alt Text](Graphs/All/weak_comp_random.png "Some Title")
 
+Weak Scaling comp 1_perc
 ![Some Alt Text](Graphs/All/weak_comp_1_perc.png "Some Title")
 
+Weak Scaling comp Reverse Sorted
 ![Some Alt Text](Graphs/All/weak_comp_rev.png "Some Title")
 
 ### Individual Reflections
