@@ -895,19 +895,24 @@ Now, we will compare the performance our algorithms under weak scaling. For this
 
 ##### Overall
 
-TODO
+As we can see in the scale of weak sorting there is a common trend among all the algorithmns, we noticed that the scaling for Radix seemed to be the most inefficient which indicates the benefit from parralelism falls off across runs with higher processes. We can also see that trend across all input types, We can see that many of the other algorithmns keep a relatively consistent scale as the number of processes increase
 
+Weak Scaling main_sorted
 ![Some Alt Text](Graphs/All/weak_main_sorted.png "Some Title")
 
+Weak Scaling main_random
 ![Some Alt Text](Graphs/All/weak_main_random.png "Some Title")
 
+Weak Scaling main_1_perc
 ![Some Alt Text](Graphs/All/weak_main_1_perc.png "Some Title")
 
+
+Weak Scaling main_reverse
 ![Some Alt Text](Graphs/All/weak_main_rev.png "Some Title")
 
 ##### Computation
 
-TODO
+THe other interesting notice we had through weak scaling is seeing the comp of our algorithmns, and as we actually see a low weak scaling difference for merge sort across the input types, This shows that there may be an inefficiency through the Load balancing of the algorithmn and extra communication overhead. Radix sort also scales the same as processers increase for sorted and random, however during 1_perc and reverse sorting inputs there is a bit of difference in how the algorithm scales. This is probably an increase in communication overhead for those inputs as the increases and outweights the benefits of parralelism in the algorithm.
 
 ![Some Alt Text](Graphs/All/weak_comp_sorted.png "Some Title")
 
