@@ -835,7 +835,7 @@ First, we will compare the performance of our algorithms under strong scaling. T
 
 ##### Overall
 
-TODO
+Below are the strong scaling graphs for the main (Overall) times for our runs. The 4 graphs represent the 4 different array orientations: Sorted, Random, 1% Perturbed, and Reversed (respectively). The Y axis represents time, and the X axis represents the number of processes the algorithms were run on. The number of elements in each array was standardized at 2^28 elements
 
 ![Some Alt Text](Graphs/All/strong_main_sorted.png "Some Title")
 
@@ -845,7 +845,11 @@ TODO
 
 ![Some Alt Text](Graphs/All/strong_main_rev.png "Some Title")
 
-TODO
+As you can see, the graphs look pretty similar across the board, with merge being the most improved as the number of processes increases, and the others seeming pretty flat/consistent runtime. However, Raxis Sort seems to be an exception, as our teammate who did radix sort defined his caliper regions a little differently than ours, resulting in a seemingly linearly scaling line for these set of graphs. 
+
+#### Speedup
+
+Below are the speedup graphs for the main (Overall) times for our runs. The 4 graphs represent the 4 different array orientations: Sorted, Random, 1% Perturbed, and Reversed (respectively). The Y axis represents time, and the X axis represents the number of processes the algorithms were run on. The number of elements in each array was standardized at 2^28 elements
 
 ![Some Alt Text](Graphs/All/speed_main_sorted.png "Some Title")
 
@@ -855,9 +859,11 @@ TODO
 
 ![Some Alt Text](Graphs/All/speed_main_rev.png "Some Title")
 
+As seen in the speedup graphs, the order of algorithms that most benefitted from the increase in the number of processes stayed consistent, with the order being: Merge, Biotonic, Sample, and Radix. The seemingly large amount of speedup from Merge sort can most likely be explained due to the algorithm taking an abnormally large amount of time with a smaller number of processes. Possible issues with this algorithm are listed below in the individual reflections for merge sort.
+
 ##### Computation
 
-TODO
+Below are the graphs for the computation times for our runs. The 4 graphs represent the 4 different array orientations: Sorted, Random, 1% Perturbed, and Reversed (respectively). The Y axis represents time, and the X axis represents the number of processes the algorithms were run on. The number of elements in each array was standardized at 2^28 elements
 
 ![Some Alt Text](Graphs/All/strong_comp_sorted.png "Some Title")
 
@@ -867,9 +873,11 @@ TODO
 
 ![Some Alt Text](Graphs/All/strong_comp_rev.png "Some Title")
 
+From the computation graphs, unfortunately, you cannot really tell much. The massive amount of time that Merge Sort took in this graph dwarves all of the other algorithms, making smaller differences between the other three algorithms not visible. However, one thing we could take away from this graph was that the issue with merge sort was a computational issue, and not so much a communicational issue. 
+
 ##### Communication
 
-TODO
+Below are the graphs for the computation times for our runs. The 4 graphs represent the 4 different array orientations: Sorted, Random, 1% Perturbed, and Reversed (respectively). The Y axis represents time, and the X axis represents the number of processes the algorithms were run on. The number of elements in each array was standardized at 2^28 elements
 
 ![Some Alt Text](Graphs/All/strong_comm_sorted.png "Some Title")
 
@@ -878,6 +886,8 @@ TODO
 ![Some Alt Text](Graphs/All/strong_comm_1_perc.png "Some Title")
 
 ![Some Alt Text](Graphs/All/strong_comm_rev.png "Some Title")
+
+From the communication graphs, we can see that the order of algorithms that had an increase in communication overhead stayed consistent, in the order of Sample, Radix, Merge, and finally Biotonic. The last two algorithms, Merge and Biotonic, make sense having the least overhead, as these two sorts are built for parallel computing, and efficiently communicate between each other with little wasted overhead.
 
 #### Weak Scaling
 
